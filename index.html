@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slovníček CZ-AJ</title>
+<style>
+:root{
+  --bg:#f5f6fa; --surface:#ffffff; --surface2:#eef0f6; --text:#1c2133; --muted:#687083; --border:#e2e5ee;
+  --accent:#4f46e5; --accent-text:#fff; --accent-soft:#eef0ff;
+  --ok:#15803d; --ok-bg:#16a34a; --ok-soft:#dcfce7; --bad:#b91c1c; --bad-bg:#dc2626; --bad-soft:#fee2e2;
+  --shadow:0 10px 30px rgba(28,33,80,.08); --radius:16px;
+}
+body[data-skin="dark"]{
+  --bg:#0e1120; --surface:#171b2d; --surface2:#21263b; --text:#e7e9f2; --muted:#98a0b5; --border:#2b3149;
+  --accent:#8b93ff; --accent-text:#0e1120; --accent-soft:#262a4b;
+  --ok:#4ade80; --ok-bg:#22a355; --ok-soft:#163525; --bad:#f87171; --bad-bg:#d23a3a; --bad-soft:#3b1b1e;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border)}
+.bar{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px}
+.logo{font-weight:750;font-size:1.08rem;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.logo span{background:var(--accent);color:var(--accent-text);border-radius:8px;padding:2px 7px;font-size:.85rem}
+nav{display:flex;gap:4px;flex:1}
+nav button{border:0;background:none;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+nav button:hover{background:var(--surface2);color:var(--text)}
+nav button.active{background:var(--accent-soft);color:var(--accent)}
+.icon-btn{border:1px solid var(--border);background:var(--surface);border-radius:10px;width:38px;height:38px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;flex:none}
+.icon-btn:hover{background:var(--surface2)}
+main{max-width:920px;margin:0 auto;padding:22px 16px 60px}
+h2{margin:0 0 14px;font-size:1.3rem}
+h3{margin:0 0 10px;font-size:1.05rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+label.f{display:block;font-weight:600;font-size:.88rem;margin:12px 0 5px}
+input[type=text],input[type=search],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);outline:none}
+textarea{resize:vertical;min-height:70px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+select.inline{width:auto;padding:8px 10px}
+.btn{border:1px solid var(--border);background:var(--surface);padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--bad);border-color:var(--bad-soft)}
+.btn.danger:hover{background:var(--bad-soft)}
+.btn.sm{padding:6px 10px;font-size:.85rem}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* Practice */
+.p-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.pill{white-space:nowrap;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 11px;font-size:.85rem;font-weight:600}
+.pill.ok{color:var(--ok)} .pill.bad{color:var(--bad)}
+.stage{max-width:560px;margin:0 auto}
+.card-wrap{perspective:1400px}
+.card{position:relative;width:100%;height:320px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.3,1);cursor:pointer;animation:pop .28s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 22px;text-align:center;overflow:auto}
+.face.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--surface),var(--accent-soft))}
+.face .tag{position:absolute;top:14px;left:16px;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.face .hint{position:absolute;bottom:12px;font-size:.78rem;color:var(--muted)}
+.term{font-size:2.1rem;font-weight:750;word-break:break-word}
+.term.m{font-size:1.55rem}.term.s{font-size:1.2rem;font-weight:650}
+.ipa{font-family:"Lucida Sans Unicode","Segoe UI","DejaVu Sans",sans-serif;color:var(--muted);font-size:1.15rem;margin-top:8px}
+.sub{margin-top:10px;color:var(--muted);font-size:.95rem}
+.speak{margin-top:14px}
+.answers{display:flex;gap:14px;justify-content:center;margin-top:20px}
+.ans{width:86px;height:64px;border-radius:18px;border:0;cursor:pointer;font-size:1.9rem;font-weight:800;color:#fff;box-shadow:var(--shadow);transition:transform .1s}
+.ans:active{transform:scale(.94)}
+.ans.ok{background:var(--ok-bg)} .ans.bad{background:var(--bad-bg)}
+.progress{display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:.82rem;color:var(--muted)}
+.dots{display:inline-flex;gap:4px;vertical-align:middle;margin-left:4px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--border)}
+.dot.on{background:var(--ok-bg)}
+.kbd{text-align:center;margin-top:12px;font-size:.78rem;color:var(--muted)}
+.empty{text-align:center;padding:40px 18px}
+.empty .big{font-size:2.6rem}
+
+/* Words */
+.tabs{display:flex;gap:6px;margin:14px 0}
+.tab{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:650}
+.tab.active{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px}
+.item input[type=checkbox]{margin-top:4px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.item .en{font-weight:700}
+.item .ip{color:var(--muted);font-size:.88rem;margin-left:6px;font-family:"Lucida Sans Unicode","Segoe UI",sans-serif}
+.item .cz{font-size:.92rem;margin-top:2px}
+.item .meta{display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.areatag{background:var(--surface2);border-radius:6px;padding:1px 7px}
+.item .acts{display:flex;gap:6px;flex:none}
+.chk-all{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--muted);margin:4px 0 10px}
+.chk-all input{width:17px;height:17px;accent-color:var(--accent)}
+
+/* Add */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:1px dashed var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:4px 11px;cursor:pointer;font-size:.85rem}
+.chip:hover{background:var(--accent-soft)}
+.def{margin-top:10px;font-size:.88rem;color:var(--muted);background:var(--surface2);border-radius:10px;padding:8px 10px}
+.status{font-size:.85rem;margin-top:8px;min-height:1.2em}
+
+.dup{margin-top:8px;font-size:.88rem;background:var(--accent-soft);border-radius:10px;padding:9px 11px}
+.dup.bad{background:var(--bad-soft);color:var(--text)}
+.dup.bad > b:first-of-type{color:var(--bad)}
+/* Areas */
+.area{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--border)}
+.area:first-of-type{border-top:0}
+.area .name{font-weight:700}
+.counts{font-size:.85rem;color:var(--muted)}
+
+/* Modal + toast */
+.overlay{position:fixed;inset:0;background:rgba(10,12,25,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--surface);border-radius:18px;padding:20px;width:100%;max-width:520px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:680px){
+  nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:30}
+  nav button{flex-direction:column;gap:1px;font-size:.72rem;padding:6px 8px}
+  nav button .ni{font-size:1.25rem}
+  .bar{justify-content:space-between}
+  main{padding:16px 12px 100px}
+  .card{height:290px}
+  .term{font-size:1.8rem}
+  .kbd{display:none}
+  .p-top select{width:100%}
+  .stats{flex-basis:100%}
+  #toast{bottom:90px}
+  .item .acts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="logo"><span>CZ↔EN</span> Slovníček</div>
+    <nav id="nav">
+      <button data-view="practice"><span class="ni">🎴</span> Procvičovat</button>
+      <button data-view="words"><span class="ni">📚</span> Slovíčka</button>
+      <button data-view="add"><span class="ni">➕</span> Přidat</button>
+      <button data-view="areas"><span class="ni">🗂️</span> Oblasti</button>
+    </nav>
+    <span id="sync" class="small muted" style="white-space:nowrap"></span>
+    <button class="icon-btn" id="themeBtn" title="Přepnout světlý / tmavý režim">🌙</button>
+  </div>
+</header>
+<main id="app"></main>
+<div id="toast"></div>
+
+<script>
+/* ============ VÝCHOZÍ POJMY: Softwarová dokumentace ============ */
+const SEED = [
+["API","ˌeɪ.piːˈaɪ","rozhraní pro programování aplikací; způsob, jakým spolu komunikují programy"],
+["endpoint","ˈend.pɔɪnt","koncový bod; konkrétní adresa (URL) v API, na kterou se posílá požadavek"],
+["request","rɪˈkwest","požadavek (klient žádá server o data nebo akci)"],
+["response","rɪˈspɒns","odpověď (serveru na požadavek)"],
+["payload","ˈpeɪ.ləʊd","užitečná data přenášená v požadavku/odpovědi (tělo zprávy)"],
+["header","ˈhed.ər","hlavička; metadata požadavku/odpovědi (typ obsahu, autorizace…)"],
+["query parameter","ˈkwɪə.ri pəˈræm.ɪ.tər","parametr dotazu v URL za otazníkem (např. ?id=5)"],
+["argument","ˈɑːɡ.jə.mənt","argument; hodnota předaná funkci při volání"],
+["parameter","pəˈræm.ɪ.tər","parametr; vstupní proměnná funkce nebo nastavení"],
+["return value","rɪˈtɜːn ˌvæl.juː","návratová hodnota (co funkce vrátí)"],
+["deprecated","ˈdep.rə.keɪ.tɪd","zastaralé; ještě funguje, ale nedoporučuje se a v budoucnu bude odstraněno"],
+["backward compatible","ˌbæk.wəd kəmˈpæt.ə.bəl","zpětně kompatibilní; nová verze funguje se staršími daty/klienty"],
+["breaking change","ˈbreɪ.kɪŋ tʃeɪndʒ","změna, která rozbije zpětnou kompatibilitu (staré použití přestane fungovat)"],
+["release","rɪˈliːs","vydání (verze) softwaru; vydat"],
+["release notes","rɪˈliːs nəʊts","poznámky k vydání; seznam novinek a oprav v nové verzi"],
+["changelog","ˈtʃeɪndʒ.lɒɡ","záznam změn mezi verzemi"],
+["version","ˈvɜː.ʃən","verze"],
+["semantic versioning","sɪˈmæn.tɪk ˈvɜː.ʃən.ɪŋ","sémantické verzování (MAJOR.MINOR.PATCH, např. 2.4.1)"],
+["patch","pætʃ","oprava; drobná aktualizace řešící chybu"],
+["hotfix","ˈhɒt.fɪks","rychlá oprava kritické chyby přímo v produkci"],
+["bug","bʌɡ","chyba v softwaru"],
+["issue","ˈɪʃ.uː","problém/úkol evidovaný v systému (např. GitHub Issues, Jira)"],
+["workaround","ˈwɜːk.ə.raʊnd","náhradní řešení; způsob, jak problém obejít"],
+["known issues","nəʊn ˈɪʃ.uːz","známé problémy (zatím neopravené)"],
+["troubleshooting","ˈtrʌb.əlˌʃuː.tɪŋ","řešení potíží; postup hledání příčiny problému"],
+["prerequisites","ˌpriːˈrek.wɪ.zɪts","předpoklady; co musí být splněno nebo nainstalováno předem"],
+["requirements","rɪˈkwaɪə.mənts","požadavky (systémové nebo funkční)"],
+["installation","ˌɪn.stəˈleɪ.ʃən","instalace"],
+["setup","ˈset.ʌp","nastavení, příprava prostředí"],
+["configuration","kənˌfɪɡ.əˈreɪ.ʃən","konfigurace; nastavení chování programu"],
+["environment variable","ɪnˈvaɪ.rən.mənt ˈveə.ri.ə.bəl","proměnná prostředí; hodnota nastavená v systému, kterou si čte aplikace"],
+["default","dɪˈfɔːlt","výchozí (hodnota/nastavení)"],
+["optional","ˈɒp.ʃən.əl","volitelný"],
+["mandatory","ˈmæn.də.tər.i","povinný"],
+["required","rɪˈkwaɪəd","vyžadovaný, povinný"],
+["dependency","dɪˈpen.dən.si","závislost; knihovna/balíček, který projekt potřebuje ke svému běhu"],
+["package","ˈpæk.ɪdʒ","balíček (knihovna připravená k instalaci)"],
+["library","ˈlaɪ.brər.i","knihovna; hotový kód, který voláš ze svého programu"],
+["framework","ˈfreɪm.wɜːk","framework, rámec; hotová struktura, do které se píše vlastní kód"],
+["SDK","ˌes.diːˈkeɪ","sada nástrojů pro vývoj (Software Development Kit)"],
+["runtime","ˈrʌn.taɪm","běhové prostředí; doba, kdy program běží"],
+["build","bɪld","sestavení; převod zdrojového kódu do spustitelné podoby"],
+["compile","kəmˈpaɪl","kompilovat; přeložit zdrojový kód do strojového"],
+["deploy","dɪˈplɔɪ","nasadit (aplikaci na server/do prostředí)"],
+["deployment","dɪˈplɔɪ.mənt","nasazení"],
+["rollback","ˈrəʊl.bæk","vrácení na předchozí verzi"],
+["environment","ɪnˈvaɪ.rən.mənt","prostředí (vývojové, testovací, produkční)"],
+["production","prəˈdʌk.ʃən","produkce; ostrý provoz pro skutečné uživatele"],
+["staging","ˈsteɪ.dʒɪŋ","předprodukční prostředí; kopie produkce pro finální testy"],
+["sandbox","ˈsænd.bɒks","izolované bezpečné prostředí na zkoušení"],
+["repository","rɪˈpɒz.ɪ.tər.i","repozitář; úložiště kódu a jeho historie"],
+["branch","brɑːntʃ","větev (v gitu); samostatná linie vývoje"],
+["commit","kəˈmɪt","uložená sada změn v gitu s popisem; uložit změny"],
+["merge","mɜːdʒ","sloučit (větve/změny)"],
+["pull request","ˈpʊl rɪˌkwest","žádost o začlenění změn do hlavní větve (s revizí kódu)"],
+["code review","ˈkəʊd rɪˌvjuː","revize kódu kolegou"],
+["source code","ˈsɔːs kəʊd","zdrojový kód"],
+["snippet","ˈsnɪp.ɪt","krátká ukázka kódu"],
+["sample","ˈsɑːm.pəl","ukázka, vzorek"],
+["boilerplate","ˈbɔɪ.lə.pleɪt","šablonovitý, stále se opakující kód, který je nutné napsat"],
+["template","ˈtem.pleɪt","šablona"],
+["syntax","ˈsɪn.tæks","syntaxe; pravidla zápisu kódu"],
+["function","ˈfʌŋk.ʃən","funkce"],
+["method","ˈmeθ.əd","metoda (funkce patřící objektu/třídě)"],
+["class","klɑːs","třída (předpis pro vytváření objektů)"],
+["instance","ˈɪn.stəns","instance; konkrétní objekt vytvořený z třídy"],
+["object","ˈɒb.dʒɪkt","objekt"],
+["property","ˈprɒp.ə.ti","vlastnost (objektu)"],
+["attribute","ˈæt.rɪ.bjuːt","atribut, vlastnost"],
+["variable","ˈveə.ri.ə.bəl","proměnná"],
+["constant","ˈkɒn.stənt","konstanta (hodnota, která se nemění)"],
+["string","strɪŋ","řetězec (text)"],
+["integer","ˈɪn.tɪ.dʒər","celé číslo"],
+["boolean","ˈbuː.li.ən","logická hodnota (true/false)"],
+["array","əˈreɪ","pole (seřazený seznam hodnot)"],
+["null","nʌl","prázdná hodnota, „nic“"],
+["data type","ˈdeɪ.tə taɪp","datový typ"],
+["interface","ˈɪn.tə.feɪs","rozhraní"],
+["implementation","ˌɪm.plɪ.menˈteɪ.ʃən","implementace; konkrétní provedení (naprogramování)"],
+["callback","ˈkɔːl.bæk","funkce předaná jiné funkci, která ji zavolá později"],
+["asynchronous","eɪˈsɪŋ.krə.nəs","asynchronní; neprobíhá hned, na výsledek se nečeká"],
+["synchronous","ˈsɪŋ.krə.nəs","synchronní; čeká se na dokončení"],
+["thread","θred","vlákno (souběžně běžící část programu)"],
+["exception","ɪkˈsep.ʃən","výjimka; chybový stav za běhu programu"],
+["error handling","ˈer.ər ˌhænd.lɪŋ","ošetření chyb"],
+["error message","ˈer.ər ˌmes.ɪdʒ","chybová hláška"],
+["stack trace","ˈstæk treɪs","výpis volání funkcí v okamžiku chyby"],
+["log","lɒɡ","log, záznam (protokol) událostí"],
+["logging","ˈlɒɡ.ɪŋ","zaznamenávání událostí do logu"],
+["debug","diːˈbʌɡ","ladit; hledat a odstraňovat chyby"],
+["timeout","ˈtaɪm.aʊt","časový limit; vypršení času na odpověď"],
+["retry","ˌriːˈtraɪ","opakovat pokus; opakovaný pokus"],
+["rate limit","ˈreɪt ˌlɪm.ɪt","omezení počtu požadavků za určitý čas"],
+["throttling","ˈθrɒt.əl.ɪŋ","přiškrcení; záměrné zpomalení/omezení provozu"],
+["latency","ˈleɪ.tən.si","latence; zpoždění odpovědi"],
+["performance","pəˈfɔː.məns","výkon"],
+["scalability","ˌskeɪ.ləˈbɪl.ə.ti","škálovatelnost; schopnost zvládnout větší zátěž"],
+["cache","kæʃ","mezipaměť (dočasně uložená data pro rychlejší přístup)"],
+["database","ˈdeɪ.tə.beɪs","databáze"],
+["query","ˈkwɪə.ri","dotaz (např. do databáze)"],
+["schema","ˈskiː.mə","schéma; popis struktury dat"],
+["record","ˈrek.ɔːd","záznam (např. řádek v databázi)"],
+["field","fiːld","pole, položka (údaj ve formuláři / sloupec)"],
+["migration","maɪˈɡreɪ.ʃən","migrace; převod dat nebo struktury na novou verzi"],
+["backup","ˈbæk.ʌp","záloha"],
+["authentication","ɔːˌθen.tɪˈkeɪ.ʃən","autentizace; ověření identity (kdo jsi – přihlášení)"],
+["authorization","ˌɔː.θər.aɪˈzeɪ.ʃən","autorizace; ověření oprávnění (co smíš dělat)"],
+["token","ˈtəʊ.kən","token; řetězec prokazující přihlášení nebo oprávnění"],
+["API key","ˌeɪ.piːˈaɪ kiː","klíč k API, kterým se aplikace identifikuje"],
+["credentials","krəˈden.ʃəlz","přihlašovací údaje"],
+["permission","pəˈmɪʃ.ən","oprávnění, povolení"],
+["encryption","ɪnˈkrɪp.ʃən","šifrování"],
+["vulnerability","ˌvʌl.nər.əˈbɪl.ə.ti","zranitelnost; bezpečnostní slabina"],
+["user interface","ˌjuː.zər ˈɪn.tə.feɪs","uživatelské rozhraní (UI)"],
+["command line","kəˈmɑːnd laɪn","příkazový řádek"],
+["command","kəˈmɑːnd","příkaz"],
+["flag","flæɡ","přepínač u příkazu (např. --verbose)"],
+["verbose","vɜːˈbəʊs","podrobný (výpis s množstvím detailů)"],
+["script","skrɪpt","skript; krátký program automatizující úkol"],
+["executable","ɪɡˈzek.jə.tə.bəl","spustitelný (soubor)"],
+["directory","daɪˈrek.tər.i","adresář, složka"],
+["path","pɑːθ","cesta (k souboru)"],
+["file extension","faɪl ɪkˈsten.ʃən","přípona souboru (.txt, .json…)"],
+["plugin","ˈplʌɡ.ɪn","zásuvný modul rozšiřující funkce"],
+["extension","ɪkˈsten.ʃən","rozšíření"],
+["integration","ˌɪn.tɪˈɡreɪ.ʃən","integrace; propojení systémů"],
+["webhook","ˈweb.hʊk","automatické HTTP oznámení jinému systému, když nastane událost"],
+["server","ˈsɜː.vər","server"],
+["client","ˈklaɪ.ənt","klient (aplikace, která žádá server o data)"],
+["host","həʊst","hostitel; počítač/server, na kterém něco běží"],
+["port","pɔːt","port (číslo kanálu pro síťovou komunikaci)"],
+["URL","ˌjuː.ɑːrˈel","webová adresa"],
+["JSON","ˈdʒeɪ.sən","textový formát pro výměnu dat"],
+["format","ˈfɔː.mæt","formát; formátovat"],
+["parse","pɑːz","parsovat; rozebrat text a převést ho do struktury"],
+["validation","ˌvæl.ɪˈdeɪ.ʃən","validace; kontrola správnosti dat"],
+["input","ˈɪn.pʊt","vstup"],
+["output","ˈaʊt.pʊt","výstup"],
+["feature","ˈfiː.tʃər","funkce/vlastnost produktu"],
+["functionality","ˌfʌŋk.ʃənˈæl.ə.ti","funkčnost"],
+["specification","ˌspes.ɪ.fɪˈkeɪ.ʃən","specifikace; přesný popis, jak má něco fungovat"],
+["overview","ˈəʊ.və.vjuː","přehled"],
+["getting started","ˈɡet.ɪŋ ˈstɑː.tɪd","začínáme (úvodní návod)"],
+["tutorial","tjuːˈtɔː.ri.əl","výukový návod krok za krokem"],
+["reference","ˈref.ər.əns","referenční dokumentace (úplný popis všech funkcí); odkaz"],
+["guide","ɡaɪd","příručka, průvodce"],
+["FAQ","ˌef.eɪˈkjuː","často kladené otázky"],
+["note","nəʊt","poznámka (upozornění na důležitou informaci)"],
+["warning","ˈwɔː.nɪŋ","varování"],
+["best practices","best ˈpræk.tɪ.sɪz","osvědčené postupy"],
+["use case","ˈjuːs keɪs","případ užití; scénář, jak uživatel systém používá"],
+["edge case","ˈedʒ keɪs","hraniční případ; neobvyklá situace na okraji možností"],
+["out of the box","ˌaʊt əv ðə ˈbɒks","hned po instalaci, bez dalšího nastavování"],
+["under the hood","ˌʌn.də ðə ˈhʊd","„pod kapotou“; jak to funguje uvnitř"],
+["legacy","ˈleɡ.ə.si","zastaralý, zděděný (starý systém/kód, který je stále v provozu)"],
+["open source","ˌəʊ.pən ˈsɔːs","otevřený zdrojový kód, volně dostupný"],
+["license","ˈlaɪ.səns","licence (podmínky užití)"],
+["maintainer","meɪnˈteɪ.nər","správce projektu"],
+["contributor","kənˈtrɪb.jə.tər","přispěvatel do projektu"],
+["abstraction","æbˈstræk.ʃən","abstrakce; skrytí detailů za jednodušší rozhraní"],
+["wrapper","ˈræp.ər","obal; kód, který obaluje jiný a zjednodušuje jeho použití"],
+["instantiate","ɪnˈstæn.ʃi.eɪt","vytvořit instanci (objekt)"],
+["invoke","ɪnˈvəʊk","zavolat, spustit (funkci)"],
+["trigger","ˈtrɪɡ.ər","spouštěč; spustit, vyvolat (akci)"],
+["event","ɪˈvent","událost"],
+["handler","ˈhænd.lər","obsluha (funkce reagující na událost)"],
+["enable","ɪˈneɪ.bəl","povolit, zapnout"],
+["disable","dɪˈseɪ.bəl","zakázat, vypnout"],
+["override","ˌəʊ.vəˈraɪd","přepsat (výchozí chování nebo hodnotu)"],
+["supported","səˈpɔː.tɪd","podporovaný"],
+["compatible","kəmˈpæt.ə.bəl","kompatibilní, slučitelný"],
+["upgrade","ʌpˈɡreɪd","aktualizovat na novější verzi; povýšení"],
+["subscription","səbˈskrɪp.ʃən","předplatné; odběr (např. událostí)"],
+["placeholder","ˈpleɪsˌhəʊl.dər","zástupný text/symbol, který se nahradí skutečnou hodnotou"],
+["whitespace","ˈwaɪt.speɪs","bílé znaky (mezery, tabulátory, konce řádků)"],
+["case-sensitive","ˌkeɪsˈsen.sɪ.tɪv","rozlišuje velká a malá písmena"],
+["wildcard","ˈwaɪld.kɑːd","zástupný znak (např. *)"],
+["regular expression","ˌreɡ.jə.lər ɪkˈspreʃ.ən","regulární výraz; vzor pro vyhledávání v textu"],
+["encoding","ɪnˈkəʊ.dɪŋ","kódování (znaků, např. UTF-8)"],
+["algorithm","ˈæl.ɡə.rɪ.ðəm","algoritmus; přesný postup řešení úlohy"]
+];
+const SEED_AREA = "Softwarová dokumentace";
+const GENERAL_AREA = "Obecná angličtina";
+const ISTQB_AREA = "ISTQB – testování";
+
+/* ============ VÝCHOZÍ POJMY: ISTQB CTFL v4.0.1 (bez pojmů z oblasti Softwarová dokumentace) ============ */
+const SEED_ISTQB_ALL = [
+["coverage","ˈkʌv.ər.ɪdʒ","pokrytí; míra (v %), do jaké testy prověřily dané položky (požadavky, kód…)"],
+["defect","ˈdiː.fekt","defekt, vada; nedostatek v produktu (kódu, dokumentu), který může způsobit selhání"],
+["error","ˈer.ər","chyba (omyl) člověka, která vede ke vzniku defektu"],
+["failure","ˈfeɪ.ljər","selhání; systém se za běhu nechová podle očekávání (projev defektu)"],
+["quality","ˈkwɒl.ə.ti","kvalita; míra, do jaké produkt splňuje požadavky a potřeby uživatelů"],
+["quality assurance","ˈkwɒl.ə.ti əˈʃɔː.rəns","zajištění kvality (QA); procesy zaměřené na předcházení vadám"],
+["root cause","ˌruːt ˈkɔːz","základní (prvotní) příčina problému"],
+["test analysis","test əˈnæl.ə.sɪs","analýza testů; CO testovat – určení testovacích podmínek z testovací báze"],
+["test basis","test ˈbeɪ.sɪs","testovací báze; podklady, ze kterých se odvozují testy (požadavky, specifikace…)"],
+["test case","ˈtest keɪs","testovací případ; předpoklady, vstupy, kroky a očekávané výsledky"],
+["test completion","test kəmˈpliː.ʃən","dokončení testů; uzavření testování, archivace testwaru, vyhodnocení"],
+["test condition","test kənˈdɪʃ.ən","testovací podmínka; testovatelný aspekt (funkce, vlastnost), který se má ověřit"],
+["test control","test kənˈtrəʊl","řízení testů; nápravná opatření, když testování neprobíhá podle plánu"],
+["test data","test ˈdeɪ.tə","testovací data"],
+["test design","test dɪˈzaɪn","návrh testů; JAK testovat – tvorba testovacích případů z podmínek"],
+["test execution","test ˌek.sɪˈkjuː.ʃən","provádění testů; spuštění testů a porovnání skutečných a očekávaných výsledků"],
+["test implementation","test ˌɪm.plɪ.menˈteɪ.ʃən","implementace testů; příprava testwaru a prostředí pro provedení"],
+["test monitoring","test ˈmɒn.ɪ.tər.ɪŋ","monitorování testů; průběžné sledování postupu testování proti plánu"],
+["test object","test ˈɒb.dʒɪkt","předmět testu; to, co se testuje"],
+["test objective","test əbˈdʒek.tɪv","cíl testování; důvod, proč se testuje"],
+["test planning","test ˈplæn.ɪŋ","plánování testů; určení cílů, přístupu, zdrojů a harmonogramu"],
+["test procedure","test prəˈsiː.dʒər","testovací procedura; posloupnost testovacích případů v pořadí provádění"],
+["test process","test ˈprəʊ.ses","testovací proces; soubor testovacích činností (plánování, analýza, návrh…)"],
+["test result","test rɪˈzʌlt","výsledek testu (prošel / selhal)"],
+["testing","ˈtes.tɪŋ","testování"],
+["testware","ˈtest.weər","testware; všechny výstupy testování (plány, případy, data, skripty, reporty)"],
+["traceability","ˌtreɪ.səˈbɪl.ə.ti","sledovatelnost; vazby mezi požadavky, testy, výsledky a defekty"],
+["verification","ˌver.ɪ.fɪˈkeɪ.ʃən","verifikace; ověření, že produkt splňuje specifikované požadavky"],
+["validation","ˌvæl.ɪˈdeɪ.ʃən","validace"],
+["debugging","diːˈbʌɡ.ɪŋ","ladění"],
+["acceptance testing","əkˈsep.təns ˈtes.tɪŋ","akceptační testování; ověření, že systém splňuje potřeby uživatele a je připraven k převzetí"],
+["black-box testing","ˌblæk.bɒks ˈtes.tɪŋ","testování černé skříňky; testování podle specifikace bez znalosti vnitřní struktury"],
+["component integration testing","kəmˈpəʊ.nənt ˌɪn.tɪˈɡreɪ.ʃən ˈtes.tɪŋ","integrační testování komponent; testování rozhraní a spolupráce mezi komponentami"],
+["component testing","kəmˈpəʊ.nənt ˈtes.tɪŋ","testování komponent (unit testy); testování jednotlivých částí izolovaně"],
+["confirmation testing","ˌkɒn.fəˈmeɪ.ʃən ˈtes.tɪŋ","konfirmační testování (retest); ověření, že oprava defektu funguje"],
+["functional testing","ˈfʌŋk.ʃən.əl ˈtes.tɪŋ","funkční testování; ověřuje, CO systém dělá"],
+["integration testing","ˌɪn.tɪˈɡreɪ.ʃən ˈtes.tɪŋ","integrační testování; testování spolupráce komponent nebo systémů"],
+["maintenance testing","ˈmeɪn.tən.əns ˈtes.tɪŋ","testování údržby; testování změn v systému, který už je v provozu"],
+["non-functional testing","ˌnɒnˈfʌŋk.ʃən.əl ˈtes.tɪŋ","nefunkční testování; ověřuje, JAK DOBŘE systém funguje (výkon, použitelnost, bezpečnost…)"],
+["regression testing","rɪˈɡreʃ.ən ˈtes.tɪŋ","regresní testování; ověření, že změna nerozbila dříve fungující části"],
+["shift left","ˌʃɪft ˈleft","posun doleva; testovat co nejdříve ve vývojovém cyklu"],
+["system integration testing","ˈsɪs.təm ˌɪn.tɪˈɡreɪ.ʃən ˈtes.tɪŋ","systémové integrační testování; testování rozhraní mezi systémy a externími službami"],
+["system testing","ˈsɪs.təm ˈtes.tɪŋ","systémové testování; testování celého systému jako celku"],
+["test level","ˈtest ˌlev.əl","úroveň testování (komponentové, integrační, systémové, akceptační)"],
+["test type","ˈtest taɪp","typ testu (funkční, nefunkční, černá/bílá skříňka)"],
+["white-box testing","ˌwaɪt.bɒks ˈtes.tɪŋ","testování bílé skříňky; testování založené na vnitřní struktuře (kódu)"],
+["anomaly","əˈnɒm.ə.li","anomálie; odchylka od očekávání (možný defekt)"],
+["dynamic testing","daɪˈnæm.ɪk ˈtes.tɪŋ","dynamické testování; testování se spuštěním softwaru"],
+["formal review","ˈfɔː.məl rɪˈvjuː","formální revize; revize s definovaným procesem, rolemi a dokumentací"],
+["informal review","ɪnˈfɔː.məl rɪˈvjuː","neformální revize; revize bez pevně daného postupu"],
+["inspection","ɪnˈspek.ʃən","inspekce; nejformálnější typ revize, sbírají se metriky"],
+["review","rɪˈvjuː","revize; kontrola pracovního produktu (dokumentu, kódu) lidmi"],
+["static analysis","ˈstæt.ɪk əˈnæl.ə.sɪs","statická analýza; automatická kontrola kódu nástrojem bez spuštění"],
+["static testing","ˈstæt.ɪk ˈtes.tɪŋ","statické testování; testování bez spuštění softwaru (revize, statická analýza)"],
+["technical review","ˈtek.nɪ.kəl rɪˈvjuː","technická revize; revize odborníky zaměřená na technická rozhodnutí"],
+["walkthrough","ˈwɔːk.θruː","procházení (walkthrough); revize vedená autorem, který produkt prochází s ostatními"],
+["acceptance criteria","əkˈsep.təns kraɪˈtɪə.ri.ə","akceptační kritéria; podmínky, které musí user story splnit, aby byla přijata"],
+["acceptance test-driven development","əkˈsep.təns ˌtest.drɪv.ən dɪˈvel.əp.mənt","vývoj řízený akceptačními testy (ATDD); testy z akceptačních kritérií vznikají před vývojem"],
+["black-box test technique","ˌblæk.bɒks ˈtest tekˌniːk","technika černé skříňky; návrh testů podle specifikace"],
+["boundary value analysis","ˈbaʊn.dər.i ˈvæl.juː əˈnæl.ə.sɪs","analýza hraničních hodnot; testování hodnot na hranicích tříd (např. 0, 1, 99, 100)"],
+["branch coverage","ˈbrɑːntʃ ˌkʌv.ər.ɪdʒ","pokrytí větví; podíl větví (rozhodnutí) v kódu prověřených testy"],
+["checklist-based testing","ˈtʃek.lɪst beɪst ˈtes.tɪŋ","testování podle kontrolního seznamu (checklistu)"],
+["collaboration-based test approach","kəˌlæb.əˈreɪ.ʃən beɪst ˈtest əˌprəʊtʃ","přístup založený na spolupráci; testy vznikají společně (tester, vývojář, byznys)"],
+["coverage item","ˈkʌv.ər.ɪdʒ ˌaɪ.təm","položka pokrytí; co se počítá při měření pokrytí (třída, hranice, přechod…)"],
+["decision table testing","dɪˈsɪʒ.ən ˌteɪ.bəl ˈtes.tɪŋ","testování rozhodovacích tabulek; kombinace podmínek a jejich výsledků"],
+["equivalence partitioning","ɪˈkwɪv.əl.əns pɑːˈtɪʃ.ən.ɪŋ","rozdělení do tříd ekvivalence; hodnoty se chovají stejně → stačí otestovat jednu z každé třídy"],
+["error guessing","ˈer.ər ˌɡes.ɪŋ","odhadování chyb; testy podle zkušenosti, kde se chyby typicky vyskytují"],
+["experience-based test technique","ɪkˈspɪə.ri.əns beɪst ˈtest tekˌniːk","technika založená na zkušenostech testera"],
+["exploratory testing","ɪkˈsplɒr.ə.tər.i ˈtes.tɪŋ","průzkumné (exploratorní) testování; souběžné učení, návrh a provádění testů"],
+["state transition testing","steɪt trænˈzɪʃ.ən ˈtes.tɪŋ","testování přechodů stavů; ověřuje stavy systému a přechody mezi nimi"],
+["statement coverage","ˈsteɪt.mənt ˌkʌv.ər.ɪdʒ","pokrytí příkazů; podíl příkazů v kódu provedených testy"],
+["test technique","ˈtest tekˌniːk","testovací technika; postup pro návrh testů"],
+["white-box test technique","ˌwaɪt.bɒks ˈtest tekˌniːk","technika bílé skříňky; návrh testů podle struktury kódu"],
+["defect management","ˈdiː.fekt ˈmæn.ɪdʒ.mənt","správa defektů; evidence, sledování a řešení defektů"],
+["defect report","ˈdiː.fekt rɪˌpɔːt","hlášení defektu (bug report)"],
+["entry criteria","ˈen.tri kraɪˈtɪə.ri.ə","vstupní kritéria; podmínky, které musí být splněny, aby testování mohlo začít"],
+["exit criteria","ˈek.sɪt kraɪˈtɪə.ri.ə","výstupní kritéria; podmínky pro ukončení testování"],
+["product risk","ˈprɒd.ʌkt rɪsk","produktové riziko; riziko týkající se kvality produktu"],
+["project risk","ˈprɒdʒ.ekt rɪsk","projektové riziko; riziko týkající se řízení projektu (zpoždění, zdroje…)"],
+["risk","rɪsk","riziko; možná budoucí událost s negativním dopadem"],
+["risk analysis","rɪsk əˈnæl.ə.sɪs","analýza rizik (identifikace + hodnocení)"],
+["risk assessment","rɪsk əˈses.mənt","hodnocení rizik; určení pravděpodobnosti a dopadu"],
+["risk control","rɪsk kənˈtrəʊl","řízení (kontrola) rizik; zmírňování a sledování rizik"],
+["risk identification","rɪsk aɪˌden.tɪ.fɪˈkeɪ.ʃən","identifikace rizik"],
+["risk level","ˈrɪsk ˌlev.əl","úroveň rizika (kombinace pravděpodobnosti a dopadu)"],
+["risk management","rɪsk ˈmæn.ɪdʒ.mənt","řízení rizik"],
+["risk mitigation","rɪsk ˌmɪt.ɪˈɡeɪ.ʃən","zmírnění rizika; opatření snižující pravděpodobnost nebo dopad"],
+["risk monitoring","rɪsk ˈmɒn.ɪ.tər.ɪŋ","monitorování rizik"],
+["risk-based testing","ˌrɪsk.beɪst ˈtes.tɪŋ","testování založené na rizicích; priorita testů podle úrovně rizika"],
+["test approach","ˈtest əˌprəʊtʃ","testovací přístup; způsob testování v konkrétním projektu"],
+["test completion report","test kəmˈpliː.ʃən rɪˌpɔːt","závěrečná zpráva o testování"],
+["test plan","ˈtest plæn","testovací plán; dokument s cíli, rozsahem, přístupem a harmonogramem testů"],
+["test progress report","test ˈprəʊ.ɡres rɪˌpɔːt","zpráva o průběhu testování"],
+["test pyramid","ˈtest ˌpɪr.ə.mɪd","testovací pyramida; hodně jednotkových testů dole, málo end-to-end testů nahoře"],
+["test strategy","ˈtest ˌstræt.ə.dʒi","testovací strategie; obecný popis testování v organizaci/projektu"],
+["testing quadrants","ˈtes.tɪŋ ˈkwɒd.rənts","testovací kvadranty; rozdělení testů v agilním vývoji do 4 skupin"],
+["test automation","ˈtest ˌɔː.təˈmeɪ.ʃən","automatizace testů; provádění testů pomocí nástrojů/skriptů"],
+["stakeholder","ˈsteɪkˌhəʊl.dər","zúčastněná strana; kdo má zájem na projektu (zákazník, uživatel, vedení…)"],
+["work product","ˈwɜːk ˌprɒd.ʌkt","pracovní produkt; výstup práce (dokument, kód, test…)"],
+["test environment","ˈtest ɪnˌvaɪ.rən.mənt","testovací prostředí (hardware, software, data pro testování)"],
+["test effort","ˈtest ˌef.ət","pracnost testování"],
+["estimation","ˌes.tɪˈmeɪ.ʃən","odhad (pracnosti, času)"],
+["Planning Poker","ˈplæn.ɪŋ ˈpəʊ.kər","plánovací poker; týmový odhad pracnosti pomocí karet"],
+["Wideband Delphi","ˈwaɪd.bænd ˈdel.faɪ","Wideband Delphi; experti odhadují opakovaně, dokud se neshodnou"],
+["three-point estimation","ˌθriː.pɔɪnt ˌes.tɪˈmeɪ.ʃən","tříbodový odhad (optimistický, nejpravděpodobnější, pesimistický)"],
+["test-driven development","ˌtest.drɪv.ən dɪˈvel.əp.mənt","vývoj řízený testy (TDD); nejdřív test, pak kód"],
+["behavior-driven development","bɪˈheɪ.vjər ˌdrɪv.ən dɪˈvel.əp.mənt","vývoj řízený chováním (BDD); chování popsané větami Given–When–Then"],
+["DevOps","ˈdev.ɒps","DevOps; propojení vývoje (Dev) a provozu (Ops), časté automatické nasazování"],
+["retrospective","ˌret.rəˈspek.tɪv","retrospektiva; schůzka týmu na konci iterace – co fungovalo a co zlepšit"],
+["severity","sɪˈver.ə.ti","závažnost (defektu); jak velký dopad má na systém"],
+["priority","praɪˈɒr.ə.ti","priorita; jak rychle se má defekt opravit"],
+["false positive","ˌfɔːls ˈpɒz.ə.tɪv","falešně pozitivní výsledek; test hlásí chybu, která ve skutečnosti není"],
+["user story","ˈjuː.zər ˌstɔː.ri","uživatelský příběh; krátký popis požadavku z pohledu uživatele"],
+["definition of done","ˌdef.ɪˈnɪʃ.ən əv ˈdʌn","definice hotového (DoD); kdy je úkol považován za dokončený"],
+["definition of ready","ˌdef.ɪˈnɪʃ.ən əv ˈred.i","definice připraveného (DoR); kdy je úkol připravený k práci"],
+["test harness","ˈtest ˌhɑː.nɪs","testovací harness; prostředí se stuby a drivery pro spouštění testů"],
+["stub","stʌb","stub; zjednodušená náhradní komponenta, kterou testovaný objekt volá"],
+["driver","ˈdraɪ.vər","driver; komponenta, která volá testovaný objekt"],
+["test suite","ˈtest swiːt","testovací sada; skupina testovacích případů"],
+["test script","ˈtest skrɪpt","testovací skript; (automatizovaný) postup provedení testu"],
+["sequential development model","sɪˈkwen.ʃəl dɪˈvel.əp.mənt ˌmɒd.əl","sekvenční model vývoje (např. vodopád, V-model)"],
+["iterative development","ˈɪt.ər.ə.tɪv dɪˈvel.əp.mənt","iterativní vývoj; vývoj v opakovaných cyklech"],
+["incremental development","ˌɪŋ.krəˈmen.təl dɪˈvel.əp.mənt","inkrementální vývoj; systém se staví po přírůstcích"],
+["continuous integration","kənˈtɪn.ju.əs ˌɪn.tɪˈɡreɪ.ʃən","průběžná integrace (CI); časté slučování a automatické testování změn"],
+["continuous delivery","kənˈtɪn.ju.əs dɪˈlɪv.ər.i","průběžné doručování (CD); software je stále připraven k vydání"],
+["usability","ˌjuː.zəˈbɪl.ə.ti","použitelnost; jak snadno se produkt používá"],
+["maintainability","meɪnˌteɪ.nəˈbɪl.ə.ti","udržovatelnost; jak snadno se produkt upravuje a opravuje"],
+["reliability","rɪˌlaɪ.əˈbɪl.ə.ti","spolehlivost"],
+["portability","ˌpɔː.təˈbɪl.ə.ti","přenositelnost; snadnost přenosu do jiného prostředí"],
+["test charter","ˈtest ˌtʃɑː.tər","testovací charta; zadání (cíl) pro sezení průzkumného testování"],
+["session-based testing","ˈseʃ.ən beɪst ˈtes.tɪŋ","testování po sezeních; průzkumné testování v časově omezených blocích"],
+["test-first approach","ˌtest.fɜːst əˈprəʊtʃ","přístup „nejdřív test“; testy se navrhují před kódem"],
+["whole team approach","ˌhəʊl ˈtiːm əˌprəʊtʃ","přístup celého týmu; za kvalitu odpovídají všichni"],
+["independence of testing","ˌɪn.dɪˈpen.dəns əv ˈtes.tɪŋ","nezávislost testování; testuje někdo jiný než autor"],
+["expected result","ɪkˌspek.tɪd rɪˈzʌlt","očekávaný výsledek"],
+["actual result","ˌæk.tʃu.əl rɪˈzʌlt","skutečný výsledek"],
+["precondition","ˌpriː.kənˈdɪʃ.ən","vstupní podmínka; stav, který musí platit před provedením testu"],
+["postcondition","ˌpəʊst.kənˈdɪʃ.ən","výstupní podmínka; stav po provedení testu"],
+["test log","ˈtest lɒɡ","testovací záznam (log) o provedení testů"],
+["likelihood","ˈlaɪ.kli.hʊd","pravděpodobnost (rizika)"],
+["impact","ˈɪm.pækt","dopad"],
+["configuration management","kənˌfɪɡ.əˈreɪ.ʃən ˈmæn.ɪdʒ.mənt","řízení konfigurace; správa verzí a změn pracovních produktů"],
+["baseline","ˈbeɪs.laɪn","baseline; schválená verze produktu, ze které se dál vychází"],
+["metric","ˈmet.rɪk","metrika; měřitelný ukazatel"],
+["quality characteristic","ˈkwɒl.ə.ti ˌkær.ək.təˈrɪs.tɪk","charakteristika kvality (dle ISO 25010: použitelnost, výkon…)"],
+["backlog","ˈbæk.lɒɡ","backlog; seznam úkolů a požadavků k realizaci"],
+["moderator","ˈmɒd.ə.reɪ.tər","moderátor (facilitátor) revize"],
+["scribe","skraɪb","zapisovatel (při revizi)"],
+["reviewer","rɪˈvjuː.ər","revizor; účastník revize, který hledá nedostatky"]
+];
+/* pouze pojmy, které nejsou v oblasti Softwarová dokumentace (porovnává i tvary jako debug/debugging) */
+const SEED_ISTQB = (() => {
+  const have = new Set(SEED.map(x => x[0].toLowerCase()));
+  return SEED_ISTQB_ALL.filter(([en]) => { const k = en.toLowerCase(); return !have.has(k) && !have.has(k.replace(/ging$/, "")) ; });
+})();
+
+/* ============ STAV A UKLÁDÁNÍ ============ */
+const KEY = "slovnicek-cz-aj-v1";
+let uidc = 0;
+const uid = () => Date.now().toString(36) + (++uidc).toString(36) + Math.random().toString(36).slice(2, 6);
+const newWord = (areaId, en, ipa, cz) => ({ id: uid(), areaId, en, ipa, cz, status: "neumim", enCz: 0, czEn: 0, created: Date.now() });
+
+function initialState() {
+  const a0 = { id: uid(), name: GENERAL_AREA }, a1 = { id: uid(), name: SEED_AREA }, a2 = { id: uid(), name: ISTQB_AREA };
+  return { v: 1, areas: [a0, a1, a2],
+           words: [...SEED.map(([en, ipa, cz]) => newWord(a1.id, en, ipa, cz)), ...SEED_ISTQB.map(([en, ipa, cz]) => newWord(a2.id, en, ipa, cz))],
+           settings: { theme: null, practiceArea: "all", addArea: a0.id, seedV: 2 } };
+}
+/* Aktualizace starších dat: přidá oblast ISTQB a dá Obecnou angličtinu na první místo (pokrok zůstane zachován) */
+function migrate() {
+  if ((S.settings.seedV || 1) >= 2) return;
+  let a = S.areas.find(x => x.name === ISTQB_AREA);
+  if (!a) { a = { id: uid(), name: ISTQB_AREA }; S.areas.push(a); }
+  const have = new Set(S.words.map(w => w.en.toLowerCase()));
+  SEED_ISTQB.forEach(([en, ipa, cz]) => { if (!have.has(en.toLowerCase())) S.words.push(newWord(a.id, en, ipa, cz)); });
+  const gi = S.areas.findIndex(x => x.name === GENERAL_AREA);
+  if (gi > 0) S.areas.unshift(S.areas.splice(gi, 1)[0]);
+  S.settings.seedV = 2; save();
+}
+let S = null, storageWarned = false;
+let MODE = "local";            // "cloud" = účet Claude, "local" = jen tento prohlížeč
+let CL = null;                 // { col, last:{}, chunks }
+let saveT = null, writing = false, dirty = false, retryMs = 3000;
+const hasClaude = () => !!(window.claude && typeof window.claude.use === "function");
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, r) => setTimeout(() => r({ code: "timeout" }), ms))]);
+const validState = s => s && Array.isArray(s.areas) && Array.isArray(s.words) && s.areas.length;
+
+function readLocal() {
+  try { const raw = localStorage.getItem(KEY); if (raw) { const s = JSON.parse(raw); if (validState(s)) return s; } } catch (e) {}
+  return null;
+}
+function saveLocal() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch (e) { if (!storageWarned) { storageWarned = true; toast("Prohlížeč neumožňuje ukládat – stahuj si zálohu (Oblasti → Záloha)."); } }
+}
+function save() {
+  if (MODE !== "cloud") { saveLocal(); return; }
+  dirty = true; setSync("saving"); clearTimeout(saveT); saveT = setTimeout(flush, 700);
+}
+
+/* --- Ukládání k účtu (soukromá data každého uživatele) --- */
+const CHUNK = 300;
+const packWords = ws => ws.map(w => [w.id, w.areaId, w.en, w.ipa || "", w.cz || "", w.status === "umim" ? 1 : 0, w.enCz || 0, w.czEn || 0, w.created || 0]);
+const unpackWords = a => a.map(r => ({ id: r[0], areaId: r[1], en: r[2], ipa: r[3], cz: r[4], status: r[5] ? "umim" : "neumim", enCz: r[6] || 0, czEn: r[7] || 0, created: r[8] || 0 }));
+async function cloudInit() {
+  if (!hasClaude()) return false;
+  const [db, user] = await withTimeout(Promise.all([claude.use("db"), claude.use("user")]), 12000);
+  if (!db || !user) return false;
+  try { if ((await user.can("data.write")) === false) return false; } catch (e) {}
+  const id = await user.id(); if (!id) return false;
+  CL = { col: db.collection("data/users/" + id), last: {}, chunks: 0 };
+  return true;
+}
+async function cloudLoad() {
+  const m = await withTimeout(CL.col.doc("meta").get(), 10000);
+  if (!m.exists) return null;
+  const md = m.data();
+  const parts = await withTimeout(Promise.all(Array.from({ length: md.chunks || 0 }, (_, i) => CL.col.doc("w" + i).get())), 10000);
+  let words = []; const last = { meta: JSON.stringify(md) };
+  parts.forEach((s, i) => { if (s.exists) { const d = s.data(); last["w" + i] = JSON.stringify(d); words = words.concat(unpackWords(d.w || [])); } });
+  CL.last = last; CL.chunks = md.chunks || 0;
+  return { v: 1, areas: JSON.parse(JSON.stringify(md.areas || [])), settings: Object.assign({}, md.settings || {}), words };
+}
+function cloudDocs() {
+  const p = packWords(S.words), n = Math.max(1, Math.ceil(p.length / CHUNK)), docs = {};
+  for (let i = 0; i < n; i++) docs["w" + i] = { w: p.slice(i * CHUNK, (i + 1) * CHUNK) };
+  docs.meta = { v: 1, areas: S.areas, settings: S.settings, chunks: n };
+  return docs;
+}
+async function flush() {
+  clearTimeout(saveT);
+  if (MODE !== "cloud" || !dirty) return;
+  if (writing) { saveT = setTimeout(flush, 400); return; }
+  dirty = false; writing = true;
+  try {
+    const docs = cloudDocs();
+    for (const k of Object.keys(docs)) {
+      if (k === "meta") continue;
+      const s = JSON.stringify(docs[k]);
+      if (CL.last[k] !== s) { await CL.col.doc(k).set(docs[k]); CL.last[k] = s; }
+    }
+    const ms = JSON.stringify(docs.meta);
+    if (CL.last.meta !== ms) { await CL.col.doc("meta").set(docs.meta); CL.last.meta = ms; }
+    for (let i = docs.meta.chunks; i < CL.chunks; i++) { await CL.col.doc("w" + i).delete(); delete CL.last["w" + i]; }
+    CL.chunks = docs.meta.chunks; retryMs = 3000;
+    setSync(dirty ? "saving" : "ok");
+  } catch (e) {
+    const code = e && e.code;
+    if (code === "invalid_argument" || code === "revoked" || code === "not_granted" || code === "capability_disabled") {
+      MODE = "local"; saveLocal(); setSync();
+      toast("K účtu teď nejde ukládat – ukládám jen v tomto prohlížeči.");
+    } else if (code === "quota_exceeded") {
+      dirty = true; setSync("err"); toast("Úložiště je plné – smaž prosím pár slovíček nebo oblastí.");
+    } else {
+      dirty = true; setSync("err"); saveT = setTimeout(flush, retryMs); retryMs = Math.min(retryMs * 2, 60000);
+    }
+  } finally { writing = false; }
+}
+function setSync(st) {
+  const el = $("#sync"); if (!el) return;
+  if (MODE !== "cloud") { el.textContent = "💻 jen v prohlížeči"; el.title = "Data se ukládají jen v tomto prohlížeči. Přenos přes zálohu."; return; }
+  el.textContent = st === "saving" ? "⏳ ukládám…" : st === "err" ? "⚠️ neuloženo, zkouším znovu" : "☁️ uloženo";
+  el.title = "Slovíčka se ukládají k tvému účtu a jsou stejná na všech zařízeních.";
+}
+document.addEventListener("visibilitychange", async () => {
+  if (MODE !== "cloud") return;
+  if (document.visibilityState === "hidden") { flush(); return; }
+  if (dirty || writing) return;
+  try {   /* po návratu do aplikace načti změny z jiného zařízení */
+    const st = await cloudLoad();
+    if (st && validState(st) && !dirty && !writing && JSON.stringify(packWords(st.words)) !== JSON.stringify(packWords(S.words))) {
+      S = st; normalize(); cur = null; render(); toast("Načteny změny z jiného zařízení");
+    }
+  } catch (e) {}
+});
+window.addEventListener("pagehide", () => { if (MODE === "cloud") flush(); });
+
+function normalize() {
+  S.settings = Object.assign({ theme: null, practiceArea: "all", addArea: S.areas[0].id }, S.settings || {});
+  migrate();
+  const ids = new Set(S.areas.map(a => a.id));
+  const orphans = S.words.filter(w => !ids.has(w.areaId));
+  if (orphans.length) {
+    let a = S.areas.find(x => x.name === "Nezařazené");
+    if (!a) { a = { id: uid(), name: "Nezařazené" }; S.areas.push(a); }
+    orphans.forEach(w => w.areaId = a.id); save();
+    setTimeout(() => toast(`${orphans.length} slovíček bez oblasti přesunuto do „Nezařazené“`), 400);
+  }
+}
+const areaById = id => S.areas.find(a => a.id === id);
+const areaName = id => (areaById(id) || {}).name || "?";
+
+/* ============ POMOCNÉ ============ */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const ipaFmt = ipa => ipa ? "/" + esc(ipa) + "/" : "";
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600); }
+function sizeClass(text) { const n = (text || "").length; return n > 60 ? "s" : n > 22 ? "m" : ""; }
+
+/* Zvuk (syntéza řeči v prohlížeči) */
+let voices = [];
+function loadVoices() { try { voices = speechSynthesis.getVoices(); } catch (e) {} }
+if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function speak(text) {
+  if (!("speechSynthesis" in window)) { toast("Tento prohlížeč neumí přehrát výslovnost."); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = voices.find(v => v.lang === "en-GB") || voices.find(v => v.lang === "en-US") || voices.find(v => (v.lang || "").startsWith("en"));
+  if (v) u.voice = v; u.lang = v ? v.lang : "en-GB"; u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+/* Modální okna */
+function modal(html) {
+  const ov = document.createElement("div"); ov.className = "overlay";
+  ov.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener("mousedown", e => { if (e.target === ov) ov.remove(); });
+  return ov;
+}
+function ask(title, text, buttons) {
+  return new Promise(res => {
+    const ov = modal(`<h3>${esc(title)}</h3><div class="muted">${text}</div><div class="foot">${buttons.map((b, i) => `<button class="btn ${b.cls || ""}" data-i="${i}">${esc(b.label)}</button>`).join("")}</div>`);
+    $$(".foot button", ov).forEach(b => b.onclick = () => { ov.remove(); res(buttons[+b.dataset.i].value); });
+    ov.addEventListener("mousedown", e => { if (e.target === ov) res(null); });
+  });
+}
+
+/* ============ AUTOMATICKÉ DOPLNĚNÍ (online) ============ */
+async function fetchJSON(url, ms = 9000) {
+  const c = new AbortController(); const t = setTimeout(() => c.abort(), ms);
+  try { const r = await fetch(url, { signal: c.signal }); if (!r.ok) throw new Error(r.status); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+async function lookupDict(word) {
+  try {
+    const d = await fetchJSON("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word.toLowerCase()));
+    const e = d[0] || {};
+    let ipa = e.phonetic || (e.phonetics || []).map(p => p.text).find(Boolean) || "";
+    ipa = ipa.replace(/^[\/\[]+|[\/\]]+$/g, "").trim();
+    let def = "";
+    for (const m of e.meanings || []) { if (m.definitions && m.definitions[0]) { def = `(${m.partOfSpeech}) ${m.definitions[0].definition}`; break; } }
+    return { ipa, def };
+  } catch (e) { return null; }
+}
+async function lookupIPA(en) {
+  const whole = await lookupDict(en);
+  if (whole && whole.ipa) return whole;
+  const parts = en.split(/\s+/).filter(Boolean);
+  if (parts.length > 1) {
+    const rs = await Promise.all(parts.map(lookupDict));
+    if (rs.some(x => x && x.ipa)) return { ipa: rs.map((x, i) => x && x.ipa ? x.ipa : parts[i]).join(" "), def: whole ? whole.def : "" };
+  }
+  return whole;
+}
+async function translate(en) {
+  try {
+    const d = await fetchJSON("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(en) + "&langpair=en|cs");
+    if (+d.responseStatus !== 200) return null;
+    const main = ((d.responseData && d.responseData.translatedText) || "").trim();
+    const alts = [];
+    for (const m of d.matches || []) {
+      const t = (m.translation || "").trim();
+      if (t && t.length < 80 && t.toLowerCase() !== main.toLowerCase() && t.toLowerCase() !== en.toLowerCase() && !alts.some(a => a.toLowerCase() === t.toLowerCase())) alts.push(t);
+    }
+    return { cz: main, alts: alts.slice(0, 4) };
+  } catch (e) { return null; }
+}
+/* Na webu (claude.ai) doplňuje Claude; vrací undefined, když není k dispozici */
+async function aiLookup(en) {
+  if (!hasClaude()) return undefined;
+  let sample = null;
+  try { sample = await withTimeout(claude.use("sample"), 12000); } catch (e) { return undefined; }
+  if (!sample) return undefined;
+  const prompt = `Jsi anglicko-český slovník pro studentku angličtiny, která pracuje v IT jako testerka softwaru.
+Anglický výraz: ${JSON.stringify(en)}
+Vrať POUZE JSON objekt v tomto tvaru:
+{"ipa":"britská výslovnost v IPA bez lomítek, slabiky oddělené tečkou, přízvuk ˈ","cz":"nejlepší stručný český překlad; u odborného pojmu za středník krátké vysvětlení (celkem nejvýš 15 slov)","alts":["až 3 další možné české překlady"],"def":"krátká anglická definice"}`;
+  try {
+    const v = await sample.json(prompt, { modelTier: "quick" });
+    const s = x => (typeof x === "string" ? x : "").trim();
+    const r = { ok: true, ipa: s(v && v.ipa).replace(/^[\/\[]+|[\/\]]+$/g, ""), cz: s(v && v.cz), def: s(v && v.def),
+      alts: Array.isArray(v && v.alts) ? v.alts.map(s).filter(Boolean).slice(0, 3) : [] };
+    if (!r.cz && !r.ipa) return { error: "⚠️ Claude nevrátil výsledek – doplň prosím ručně." };
+    return r;
+  } catch (e) {
+    const c = e && e.code;
+    if (c === "rate_limited") return { error: "⚠️ Příliš mnoho dotazů – zkus to za chvíli." };
+    if (c === "not_granted") return { error: "⚠️ Doplňování přes Clauda není povolené – doplň prosím ručně." };
+    return { error: "⚠️ Doplnění se nepovedlo – zkus to znovu nebo doplň ručně." };
+  }
+}
+/* ============ KONTROLA DUPLICIT ============ */
+/* sjednotí zápis: velikost písmen, pomlčky, lomítka, interpunkce, mezery */
+const normEn = s => String(s || "").toLowerCase().replace(/[-_/]+/g, " ").replace(/[^\p{L}\p{N} ]+/gu, "").replace(/\s+/g, " ").trim();
+const stemEn = s => s.split(" ").map(t => t.length > 3 ? t.replace(/(ies)$/, "y").replace(/(ses|xes|ches|shes)$/, m => m.slice(0, -2)).replace(/s$/, "") : t).join(" ");
+function findDuplicates(en, excludeId) {
+  const n = normEn(en); if (!n) return { exact: [], similar: [] };
+  const st = stemEn(n), exact = [], similar = [];
+  for (const w of S.words) {
+    if (w.id === excludeId) continue;
+    const m = normEn(w.en);
+    if (m === n) exact.push(w); else if (stemEn(m) === st) similar.push(w);
+  }
+  return { exact, similar };
+}
+const statusName = w => w.status === "umim" ? "Umím" : "Neumím";
+/* zobrazí upozornění pod anglickým výrazem během psaní */
+function bindDupCheck(root, excludeId) {
+  const en = $("[name=en]", root), box = $(".dupbox", root);
+  let t;
+  const check = () => {
+    const { exact, similar } = findDuplicates(en.value, excludeId);
+    if (!exact.length && !similar.length) { box.innerHTML = ""; return; }
+    const line = w => `<div class="row" style="gap:6px;margin-top:4px"><b>${esc(w.en)}</b><span>– ${esc(w.cz)}</span>
+      <span class="areatag">${esc(areaName(w.areaId))} · ${statusName(w)}</span>
+      ${excludeId === undefined ? `<button type="button" class="btn sm dupedit" data-id="${w.id}">✏️ Upravit</button>` : ""}</div>`;
+    box.innerHTML = `<div class="dup ${exact.length ? "bad" : ""}">
+      ${exact.length ? `⚠️ <b>Tento výraz už ve slovníčku máš:</b>${exact.map(line).join("")}` : ""}
+      ${similar.length ? `<div ${exact.length ? 'style="margin-top:8px"' : ""}>💡 <b>Podobný výraz:</b>${similar.map(line).join("")}</div>` : ""}</div>`;
+    $$(".dupedit", box).forEach(b => b.onclick = () => { const w = S.words.find(x => x.id === b.dataset.id); if (w) editWord(w); });
+  };
+  en.addEventListener("input", () => { clearTimeout(t); t = setTimeout(check, 250); });
+  en.addEventListener("blur", check);
+  return check;
+}
+/* Připojí k formuláři (root) chování tlačítka "Doplnit automaticky" */
+function bindAutofill(root) {
+  const en = $("[name=en]", root), ipa = $("[name=ipa]", root), cz = $("[name=cz]", root);
+  const st = $(".status", root), chips = $(".chips", root), def = $(".defbox", root), btn = $(".autofill", root);
+  async function run() {
+    const word = en.value.trim();
+    if (!word) { st.textContent = "Nejdřív napiš anglický výraz."; en.focus(); return; }
+    btn.disabled = true; st.textContent = "⏳ Hledám překlad a výslovnost…"; chips.innerHTML = ""; def.innerHTML = "";
+    let ri = null, rt = null;
+    const ai = await aiLookup(word);
+    if (ai && ai.ok) { ri = { ipa: ai.ipa, def: ai.def }; rt = { cz: ai.cz, alts: ai.alts }; }
+    else if (ai && ai.error) { btn.disabled = false; st.textContent = ai.error; return; }
+    else [ri, rt] = await Promise.all([lookupIPA(word), translate(word)]);
+    btn.disabled = false;
+    const msgs = [], sugg = [];
+    if (ri && ri.ipa) { if (!ipa.value.trim()) ipa.value = ri.ipa; else if (ipa.value.trim() !== ri.ipa) sugg.push({ f: "ipa", v: ri.ipa, l: "výslovnost: /" + ri.ipa + "/" }); }
+    else msgs.push("výslovnost nenalezena");
+    if (rt && rt.cz) {
+      if (!cz.value.trim()) cz.value = rt.cz; else if (cz.value.trim() !== rt.cz) sugg.push({ f: "cz", v: rt.cz, l: rt.cz });
+      rt.alts.forEach(a => sugg.push({ f: "cz", v: a, l: a }));
+    } else msgs.push("překlad nenalezen");
+    if (ri && ri.def) def.innerHTML = `<div class="def">📖 <b>Anglická definice:</b> ${esc(ri.def)}</div>`;
+    if (sugg.length) {
+      chips.innerHTML = `<span class="small muted" style="align-self:center">Další návrhy (klikni = použít):</span>` +
+        sugg.map((s, i) => `<button type="button" class="chip" data-i="${i}">${esc(s.l)}</button>`).join("");
+      $$(".chip", chips).forEach(c => c.onclick = () => { const s = sugg[+c.dataset.i]; (s.f === "ipa" ? ipa : cz).value = s.v; });
+    }
+    st.textContent = msgs.length ? "⚠️ " + msgs.join(", ") + " – doplň prosím ručně (nebo zkontroluj internet)." : "✅ Doplněno – zkontroluj a případně uprav.";
+  }
+  btn.onclick = run;
+  en.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); run(); } });
+}
+function wordFormHTML(w, withAreaStatus) {
+  return `
+  <label class="f">Anglický výraz</label>
+  <div class="row"><input type="text" name="en" class="grow" value="${esc(w.en)}" placeholder="např. deprecated" autocomplete="off">
+    <button type="button" class="btn autofill">✨ Doplnit automaticky</button></div>
+  <div class="dupbox"></div>
+  <label class="f">Výslovnost (IPA)</label>
+  <div class="row"><input type="text" name="ipa" class="grow" value="${esc(w.ipa)}" placeholder="ˈdep.rə.keɪ.tɪd" autocomplete="off">
+    <button type="button" class="icon-btn sayit" title="Přehrát">🔊</button></div>
+  <label class="f">Český význam / vysvětlení</label>
+  <textarea name="cz" placeholder="zastaralé; nedoporučuje se používat…">${esc(w.cz)}</textarea>
+  <div class="chips"></div><div class="defbox"></div><div class="status muted"></div>
+  ${withAreaStatus ? `<div class="row" style="margin-top:6px">
+     <div class="grow"><label class="f">Oblast</label><select name="area">${S.areas.map(a => `<option value="${a.id}" ${a.id === w.areaId ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select></div>
+     <div class="grow"><label class="f">Složka</label><select name="status"><option value="neumim" ${w.status === "neumim" ? "selected" : ""}>Neumím</option><option value="umim" ${w.status === "umim" ? "selected" : ""}>Umím</option></select></div>
+   </div>` : ""}`;
+}
+
+/* ============ NAVIGACE ============ */
+let view = "practice";
+function show(v) { if (!S) return; view = v; $$("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v)); render(); window.scrollTo(0, 0); }
+$$("#nav button").forEach(b => b.onclick = () => show(b.dataset.view));
+function render() { ({ practice: renderPractice, words: renderWords, add: renderAdd, areas: renderAreas })[view](); }
+
+/* Motiv */
+function applyTheme() {
+  const host = document.documentElement.dataset.theme;   /* motiv, který nastaví Claude okolo stránky */
+  const sys = host === "dark" || host === "light" ? host : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const t = (S && S.settings.theme) || sys;
+  document.body.dataset.skin = t; $("#themeBtn").textContent = t === "dark" ? "☀️" : "🌙";
+}
+$("#themeBtn").onclick = () => { if (!S) return; S.settings.theme = document.body.dataset.skin === "dark" ? "light" : "dark"; save(); applyTheme(); };
+
+/* ============ PROCVIČOVÁNÍ ============ */
+let cur = null, curDir = "en", flipped = false, lastId = null, sess = { ok: 0, bad: 0 };
+function pool() { const a = S.settings.practiceArea; return S.words.filter(w => w.status === "neumim" && (a === "all" || w.areaId === a)); }
+function pickCard() {
+  const p = pool(); flipped = false;
+  if (!p.length) { cur = null; return; }
+  const c = p.length > 1 ? p.filter(w => w.id !== lastId) : p;
+  cur = c[Math.floor(Math.random() * c.length)];
+  const needs = []; if (cur.enCz < 2) needs.push("en"); if (cur.czEn < 2) needs.push("cz"); if (!needs.length) needs.push("en", "cz");
+  curDir = needs[Math.floor(Math.random() * needs.length)];
+}
+function answer(ok) {
+  if (!cur) return;
+  const w = cur;
+  if (ok) {
+    if (curDir === "en") w.enCz++; else w.czEn++;
+    sess.ok++;
+    if (w.enCz >= 2 && w.czEn >= 2) { w.status = "umim"; toast(`🎉 „${w.en}“ přesunuto do složky Umím`); }
+  } else { w.enCz = 0; w.czEn = 0; sess.bad++; }
+  lastId = w.id; save(); pickCard(); renderPractice();
+}
+const dots = n => `<span class="dots"><span class="dot ${n >= 1 ? "on" : ""}"></span><span class="dot ${n >= 2 ? "on" : ""}"></span></span>`;
+function renderPractice() {
+  if (S.settings.practiceArea !== "all" && !areaById(S.settings.practiceArea)) S.settings.practiceArea = "all";
+  if (!cur || !pool().some(w => w.id === cur.id)) pickCard();
+  const cnt = (id, st) => S.words.filter(w => w.status === st && (id === "all" || w.areaId === id)).length;
+  const a = S.settings.practiceArea;
+  let html = `<div class="p-top">
+    <select class="inline" id="pArea">
+      <option value="all">Všechny oblasti (${cnt("all", "neumim")})</option>
+      ${S.areas.map(x => `<option value="${x.id}" ${x.id === a ? "selected" : ""}>${esc(x.name)} (${cnt(x.id, "neumim")})</option>`).join("")}
+    </select>
+    <div class="stats grow"><span class="pill">Neumím: ${cnt(a, "neumim")}</span><span class="pill">Umím: ${cnt(a, "umim")}</span>
+      <span class="pill ok">✓ ${sess.ok}</span><span class="pill bad">✗ ${sess.bad}</span></div></div>`;
+  if (!cur) {
+    const total = S.words.filter(w => a === "all" || w.areaId === a).length;
+    html += `<div class="panel empty"><div class="big">${total ? "🎉" : "📭"}</div>
+      <h3>${total ? "Všechno v této oblasti umíš!" : "V této oblasti zatím nejsou slovíčka."}</h3>
+      <p class="muted">${total ? "Můžeš si slovíčka vrátit do složky Neumím v sekci Slovíčka, nebo přidat nová." : "Přidej první slovíčko."}</p>
+      <button class="btn primary" id="goAdd">➕ Přidat slovíčko</button></div>`;
+    $("#app").innerHTML = html;
+    $("#goAdd").onclick = () => show("add");
+  } else {
+    const w = cur, en = curDir === "en";
+    const front = en
+      ? `<div class="tag">Angličtina → čeština</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
+         <button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button><div class="hint">Klikni na kartu pro otočení</div>`
+      : `<div class="tag">Čeština → angličtina</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div><div class="hint">Klikni na kartu pro otočení</div>`;
+    const back = en
+      ? `<div class="tag">Český význam</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div>
+         <div class="ipa">${ipaFmt(w.ipa)}</div><div class="sub">${esc(w.en)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`
+      : `<div class="tag">Anglicky</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
+         <div class="ipa">${ipaFmt(w.ipa)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`;
+    html += `<div class="stage">
+      <div class="card-wrap"><div class="card" id="card"><div class="face front">${front}</div><div class="face back">${back}</div></div></div>
+      <div class="answers"><button class="ans ok" id="bOk" title="Znala jsem">✓</button><button class="ans bad" id="bBad" title="Neznala jsem">✗</button></div>
+      <div class="progress"><span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span><span class="areatag">${esc(areaName(w.areaId))}</span></div>
+      <div class="kbd">Klávesy: mezerník = otočit · ← = ✓ znám · → = ✗ neznám</div></div>`;
+    $("#app").innerHTML = html;
+    const card = $("#card");
+    card.onclick = e => { if (e.target.closest("[data-say]")) return; flipped = !flipped; card.classList.toggle("flipped", flipped); };
+    $$("[data-say]", card).forEach(b => b.onclick = e => { e.stopPropagation(); speak(w.en); });
+    $("#bOk").onclick = () => answer(true);
+    $("#bBad").onclick = () => answer(false);
+  }
+  $("#pArea").onchange = e => { S.settings.practiceArea = e.target.value; save(); cur = null; renderPractice(); };
+}
+document.addEventListener("keydown", e => {
+  if (view !== "practice" || $(".overlay") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  if (e.key === " " || e.key === "Enter") { const c = $("#card"); if (c) { e.preventDefault(); flipped = !flipped; c.classList.toggle("flipped", flipped); } }
+  else if (e.key === "ArrowLeft") answer(true);
+  else if (e.key === "ArrowRight") answer(false);
+});
+
+/* ============ SEZNAM SLOVÍČEK ============ */
+let W = { area: "all", tab: "neumim", q: "", sel: new Set() };
+function filteredWords() {
+  const q = W.q.trim().toLowerCase();
+  return S.words.filter(w => w.status === W.tab && (W.area === "all" || w.areaId === W.area) &&
+    (!q || w.en.toLowerCase().includes(q) || (w.cz || "").toLowerCase().includes(q)))
+    .sort((a, b) => a.en.localeCompare(b.en, "en", { sensitivity: "base" }));
+}
+function setStatus(w, st) { w.status = st; if (st === "neumim") { w.enCz = 0; w.czEn = 0; } }
+function renderWords() {
+  if (W.area !== "all" && !areaById(W.area)) W.area = "all";
+  const inArea = st => S.words.filter(w => w.status === st && (W.area === "all" || w.areaId === W.area)).length;
+  const list = filteredWords();
+  W.sel = new Set([...W.sel].filter(id => list.some(w => w.id === id)));
+  const other = W.tab === "neumim" ? "umim" : "neumim";
+  $("#app").innerHTML = `
+    <h2>Slovíčka</h2>
+    <div class="row">
+      <select class="inline" id="wArea"><option value="all">Všechny oblasti</option>
+        ${S.areas.map(a => `<option value="${a.id}" ${a.id === W.area ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select>
+      <input type="search" class="grow" id="wQ" placeholder="🔍 Hledat anglicky nebo česky…" value="${esc(W.q)}" style="min-width:180px">
+    </div>
+    <div class="tabs">
+      <button class="tab ${W.tab === "neumim" ? "active" : ""}" data-tab="neumim">❌ Neumím (${inArea("neumim")})</button>
+      <button class="tab ${W.tab === "umim" ? "active" : ""}" data-tab="umim">✅ Umím (${inArea("umim")})</button>
+    </div>
+    ${W.sel.size ? `<div class="bulk"><b>Vybráno: ${W.sel.size}</b>
+      <select class="inline" id="bArea"><option value="">Přesunout do oblasti…</option>${S.areas.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select>
+      <button class="btn sm" id="bStatus">${other === "umim" ? "→ Přesunout do Umím" : "→ Vrátit do Neumím"}</button>
+      <button class="btn sm danger" id="bDel">🗑 Smazat</button></div>` : ""}
+    ${list.length ? `<label class="chk-all"><input type="checkbox" id="selAll" ${W.sel.size === list.length ? "checked" : ""}> Vybrat vše (${list.length})</label>` : ""}
+    <div class="list">${list.length ? list.map(w => `
+      <div class="item" data-id="${w.id}">
+        <input type="checkbox" class="sel" ${W.sel.has(w.id) ? "checked" : ""}>
+        <div class="grow"><div><span class="en">${esc(w.en)}</span><span class="ip">${ipaFmt(w.ipa)}</span></div>
+          <div class="cz">${esc(w.cz)}</div>
+          <div class="meta">${W.area === "all" ? `<span class="areatag">${esc(areaName(w.areaId))}</span>` : ""}
+            ${w.status === "neumim" ? `<span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span>` : ""}</div></div>
+        <div class="acts"><button class="icon-btn say" title="Přehrát">🔊</button><button class="icon-btn edit" title="Upravit / přesunout">✏️</button>
+          <button class="icon-btn flip" title="${W.tab === "neumim" ? "Přesunout do Umím" : "Vrátit do Neumím"}">${W.tab === "neumim" ? "✅" : "↩️"}</button></div>
+      </div>`).join("") : `<div class="panel empty muted">Žádná slovíčka.</div>`}</div>`;
+
+  $("#wArea").onchange = e => { W.area = e.target.value; W.sel.clear(); renderWords(); };
+  $("#wQ").oninput = e => { W.q = e.target.value; const pos = e.target.selectionStart; renderWords(); const q = $("#wQ"); q.focus(); q.setSelectionRange(pos, pos); };
+  $$(".tab").forEach(t => t.onclick = () => { W.tab = t.dataset.tab; W.sel.clear(); renderWords(); });
+  const sa = $("#selAll"); if (sa) sa.onchange = () => { W.sel = sa.checked ? new Set(list.map(w => w.id)) : new Set(); renderWords(); };
+  $$(".item").forEach(el => {
+    const w = S.words.find(x => x.id === el.dataset.id);
+    $(".sel", el).onchange = e => { e.target.checked ? W.sel.add(w.id) : W.sel.delete(w.id); renderWords(); };
+    $(".say", el).onclick = () => speak(w.en);
+    $(".edit", el).onclick = () => editWord(w);
+    $(".flip", el).onclick = () => { setStatus(w, other); save(); toast(other === "umim" ? `„${w.en}“ → Umím` : `„${w.en}“ → Neumím`); renderWords(); };
+  });
+  if (W.sel.size) {
+    $("#bArea").onchange = e => { const id = e.target.value; if (!id) return; S.words.forEach(w => { if (W.sel.has(w.id)) w.areaId = id; });
+      toast(`Přesunuto ${W.sel.size} slovíček do „${areaName(id)}“`); W.sel.clear(); save(); renderWords(); };
+    $("#bStatus").onclick = () => { S.words.forEach(w => { if (W.sel.has(w.id)) setStatus(w, other); }); toast(`Přesunuto ${W.sel.size} slovíček`); W.sel.clear(); save(); renderWords(); };
+    $("#bDel").onclick = async () => {
+      const ok = await ask("Smazat slovíčka?", `Opravdu smazat ${W.sel.size} vybraných slovíček? Tuto akci nelze vrátit.`, [{ label: "Zrušit", value: false }, { label: "Smazat", value: true, cls: "danger" }]);
+      if (!ok) return; S.words = S.words.filter(w => !W.sel.has(w.id)); W.sel.clear(); save(); renderWords();
+    };
+  }
+}
+function editWord(w) {
+  const ov = modal(`<h3>Upravit slovíčko</h3><form id="ef">${wordFormHTML(w, true)}
+    <div class="foot"><button type="button" class="btn danger" id="eDel">🗑 Smazat</button><span class="grow"></span>
+    <button type="button" class="btn" id="eCancel">Zrušit</button><button type="submit" class="btn primary">Uložit</button></div></form>`);
+  const f = $("#ef", ov); bindAutofill(f); bindDupCheck(f, w.id);
+  $(".sayit", f).onclick = () => speak($("[name=en]", f).value || w.en);
+  $("#eCancel", ov).onclick = () => ov.remove();
+  $("#eDel", ov).onclick = async () => {
+    const ok = await ask("Smazat slovíčko?", `Opravdu smazat „${esc(w.en)}“? Tuto akci nelze vrátit.`, [{ label: "Zrušit", value: false }, { label: "Smazat", value: true, cls: "danger" }]);
+    if (!ok) return; S.words = S.words.filter(x => x.id !== w.id); save(); ov.remove(); render();
+  };
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const en = $("[name=en]", f).value.trim(); if (!en) { toast("Anglický výraz nesmí být prázdný."); return; }
+    if (normEn(en) !== normEn(w.en)) {
+      const { exact } = findDuplicates(en, w.id);
+      if (exact.length) {
+        const d = exact[0];
+        const ok = await ask("Slovíčko už existuje", `„${esc(d.en)}“ už máš v oblasti „${esc(areaName(d.areaId))}“. Uložit i tak?`, [{ label: "Zpět", value: false }, { label: "Uložit i tak", value: true, cls: "primary" }]);
+        if (!ok) return;
+      }
+    }
+    w.en = en; w.ipa = $("[name=ipa]", f).value.trim().replace(/^\/|\/$/g, ""); w.cz = $("[name=cz]", f).value.trim();
+    w.areaId = $("[name=area]", f).value;
+    const st = $("[name=status]", f).value; if (st !== w.status) setStatus(w, st);
+    save(); ov.remove(); toast("Uloženo"); render();
+  };
+}
+
+/* ============ PŘIDÁNÍ ============ */
+function renderAdd() {
+  if (!areaById(S.settings.addArea)) S.settings.addArea = S.areas[0].id;
+  const recent = [...S.words].sort((a, b) => b.created - a.created).slice(0, 6);
+  $("#app").innerHTML = `
+    <h2>Přidat slovíčko</h2>
+    <form class="panel" id="af">
+      <label class="f" style="margin-top:0">Oblast</label>
+      <select name="area">${S.areas.map(a => `<option value="${a.id}" ${a.id === S.settings.addArea ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select>
+      ${wordFormHTML({ en: "", ipa: "", cz: "" }, false)}
+      <div class="row" style="margin-top:14px"><span class="grow small muted">Napiš anglický výraz a stiskni Enter nebo „Doplnit automaticky“. Překlad a výslovnost můžeš upravit.</span>
+      <button type="submit" class="btn primary">💾 Uložit slovíčko</button></div>
+    </form>
+    <div class="panel"><h3>Naposledy přidané</h3><div class="list">${recent.map(w => `<div class="item" data-id="${w.id}"><div class="grow"><span class="en">${esc(w.en)}</span><span class="ip">${ipaFmt(w.ipa)}</span><div class="cz">${esc(w.cz)}</div>
+      <div class="meta"><span>Oblast:</span><select class="inline rarea" style="padding:4px 8px;font-size:.82rem">${S.areas.map(a => `<option value="${a.id}" ${a.id === w.areaId ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select></div></div>
+      <div class="acts"><button class="icon-btn say" title="Přehrát">🔊</button><button class="icon-btn edit" title="Upravit">✏️</button></div></div>`).join("")}</div></div>`;
+  const f = $("#af"); bindAutofill(f); bindDupCheck(f);
+  $("[name=area]", f).onchange = e => { S.settings.addArea = e.target.value; save(); };
+  $$("#app .item[data-id]").forEach(el => {
+    const w = S.words.find(x => x.id === el.dataset.id); if (!w) return;
+    $(".rarea", el).onchange = e => { w.areaId = e.target.value; save(); toast(`„${w.en}“ přesunuto do „${areaName(w.areaId)}“`); };
+    $(".say", el).onclick = () => speak(w.en);
+    $(".edit", el).onclick = () => editWord(w);
+  });
+  $(".sayit", f).onclick = () => { const v = $("[name=en]", f).value.trim(); if (v) speak(v); };
+  $("[name=en]", f).focus();
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const en = $("[name=en]", f).value.trim(), ipa = $("[name=ipa]", f).value.trim().replace(/^\/|\/$/g, ""), cz = $("[name=cz]", f).value.trim();
+    const areaId = $("[name=area]", f).value;
+    if (!en) { toast("Napiš anglický výraz."); return; }
+    if (!cz) { toast("Doplň český význam (nebo klikni na „Doplnit automaticky“)."); return; }
+    const { exact } = findDuplicates(en);
+    if (exact.length) {
+      const d = exact[0];
+      const ok = await ask("Slovíčko už existuje", `„${esc(d.en)}“ (${esc(d.cz)}) už máš v oblasti „${esc(areaName(d.areaId))}“, složka ${statusName(d)}. Přidat i tak?`, [{ label: "Nepřidávat", value: false }, { label: "Přidat i tak", value: true, cls: "primary" }]);
+      if (!ok) return;
+    }
+    S.words.push(newWord(areaId, en, ipa, cz)); S.settings.addArea = areaId; save();
+    toast(`„${en}“ uloženo do oblasti „${areaName(areaId)}“ (složka Neumím)`); renderAdd();
+  };
+}
+
+/* ============ OBLASTI + ZÁLOHA ============ */
+function renderAreas() {
+  const c = (id, st) => S.words.filter(w => w.areaId === id && w.status === st).length;
+  $("#app").innerHTML = `
+    <h2>Oblasti</h2>
+    <div class="panel">
+      ${S.areas.map((a, i) => `<div class="area" data-id="${a.id}">
+        <div style="display:flex;flex-direction:column;gap:2px"><button class="btn sm up" title="Posunout výš" ${i === 0 ? "disabled" : ""}>▲</button><button class="btn sm down" title="Posunout níž" ${i === S.areas.length - 1 ? "disabled" : ""}>▼</button></div>
+        <div class="grow"><div class="name">${esc(a.name)}</div>
+        <div class="counts">Neumím: ${c(a.id, "neumim")} · Umím: ${c(a.id, "umim")}</div></div>
+        <button class="btn sm practice">🎴 Procvičovat</button><button class="btn sm list">📚 Slovíčka</button>
+        <button class="btn sm rename">✏️ Přejmenovat</button><button class="btn sm danger del">🗑</button></div>`).join("")}
+      <form class="row" id="nf" style="margin-top:14px"><input type="text" name="n" class="grow" placeholder="Název nové oblasti (např. Cestování)" autocomplete="off">
+        <button class="btn primary" type="submit">➕ Vytvořit oblast</button></form>
+    </div>
+    <div class="panel"><h3>💾 Záloha a obnova</h3>
+      <p class="muted small" style="margin-top:0">Slovíčka se ukládají v tomto prohlížeči. Zálohu si stáhni do souboru – hodí se pro přenos na jiné zařízení (např. mobil) nebo pro jistotu.</p>
+      <div class="row"><button class="btn" id="exp">⬇️ Stáhnout zálohu</button>
+        <label class="btn">⬆️ Obnovit ze zálohy<input type="file" id="imp" accept=".json,application/json" hidden></label>
+        <button class="btn" id="seed">↻ Doplnit výchozí pojmy (IT + ISTQB)</button></div>
+    </div>`;
+  $$(".area").forEach(el => {
+    const a = areaById(el.dataset.id);
+    const moveA = d => { const i = S.areas.indexOf(a), j = i + d; if (j < 0 || j >= S.areas.length) return; [S.areas[i], S.areas[j]] = [S.areas[j], S.areas[i]]; save(); renderAreas(); };
+    $(".up", el).onclick = () => moveA(-1);
+    $(".down", el).onclick = () => moveA(1);
+    $(".practice", el).onclick = () => { S.settings.practiceArea = a.id; save(); cur = null; show("practice"); };
+    $(".list", el).onclick = () => { W.area = a.id; W.sel.clear(); show("words"); };
+    $(".rename", el).onclick = () => {
+      const ov = modal(`<h3>Přejmenovat oblast</h3><form id="rf"><input type="text" name="n" value="${esc(a.name)}"><div class="foot"><button type="button" class="btn" id="rc">Zrušit</button><button class="btn primary">Uložit</button></div></form>`);
+      const inp = $("[name=n]", ov); inp.focus(); inp.select();
+      $("#rc", ov).onclick = () => ov.remove();
+      $("#rf", ov).onsubmit = e => { e.preventDefault(); const n = inp.value.trim(); if (!n) return; a.name = n; save(); ov.remove(); renderAreas(); };
+    };
+    $(".del", el).onclick = () => deleteArea(a);
+  });
+  $("#nf").onsubmit = e => {
+    e.preventDefault(); const n = $("[name=n]", e.target).value.trim(); if (!n) return;
+    if (S.areas.some(a => a.name.toLowerCase() === n.toLowerCase())) { toast("Oblast s tímto názvem už existuje."); return; }
+    S.areas.push({ id: uid(), name: n }); save(); toast(`Oblast „${n}“ vytvořena`); renderAreas();
+  };
+  $("#exp").onclick = exportBackup;
+  $("#imp").onchange = e => { const f = e.target.files[0]; if (f) importBackup(f); e.target.value = ""; };
+  $("#seed").onclick = restoreSeed;
+}
+async function deleteArea(a) {
+  if (S.areas.length === 1) { toast("Musí zůstat aspoň jedna oblast."); return; }
+  const words = S.words.filter(w => w.areaId === a.id);
+  if (!words.length) {
+    const ok = await ask("Smazat oblast?", `Smazat prázdnou oblast „${esc(a.name)}“?`, [{ label: "Zrušit", value: false }, { label: "Smazat", value: true, cls: "danger" }]);
+    if (!ok) return;
+  } else {
+    const others = S.areas.filter(x => x.id !== a.id);
+    const ov = modal(`<h3>Smazat oblast „${esc(a.name)}“?</h3><p class="muted">Oblast obsahuje ${words.length} slovíček. Co s nimi?</p>
+      <label class="f">Přesunout slovíčka do:</label><select id="tgt">${others.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>
+      <div class="foot"><button class="btn" id="c0">Zrušit</button><button class="btn danger" id="c1">Smazat i se slovíčky</button><button class="btn primary" id="c2">Přesunout a smazat oblast</button></div>`);
+    const choice = await new Promise(res => { $("#c0", ov).onclick = () => res(null); $("#c1", ov).onclick = () => res("del"); $("#c2", ov).onclick = () => res("move"); });
+    const tgt = $("#tgt", ov).value; ov.remove();
+    if (!choice) return;
+    if (choice === "del") {
+      const ok = await ask("Opravdu?", `Smaže se ${words.length} slovíček. Tuto akci nelze vrátit.`, [{ label: "Zrušit", value: false }, { label: "Smazat", value: true, cls: "danger" }]);
+      if (!ok) return; S.words = S.words.filter(w => w.areaId !== a.id);
+    } else S.words.forEach(w => { if (w.areaId === a.id) w.areaId = tgt; });
+  }
+  S.areas = S.areas.filter(x => x.id !== a.id); save(); toast("Oblast smazána"); renderAreas();
+}
+async function exportBackup() {
+  const json = JSON.stringify({ app: "slovnicek-cz-aj", ...S }, null, 1);
+  const filename = `slovnicek-zaloha-${new Date().toISOString().slice(0, 10)}.json`;
+  if (!hasClaude()) {   /* otevřeno jako soubor v počítači */
+    const url = URL.createObjectURL(new Blob([json], { type: "application/json" })), aEl = document.createElement("a");
+    aEl.href = url; aEl.download = filename; document.body.appendChild(aEl); aEl.click(); aEl.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000); toast("Záloha stažena"); return;
+  }
+  let dl = null; try { dl = await claude.use("downloads"); } catch (e) {}
+  if (dl) {
+    try { await dl.save({ filename, data: json }); toast("Záloha uložena"); return; }
+    catch (e) { if (e && e.code === "declined") return; }
+  }
+  /* záložní cesta: zkopírovat text zálohy */
+  const ov = modal(`<h3>Záloha</h3><p class="muted small">Soubor tady nejde stáhnout. Zkopíruj text zálohy a ulož si ho (např. do poznámek nebo souboru .json).</p>
+    <textarea id="bk" style="min-height:160px;font-size:.8rem" readonly></textarea>
+    <div class="foot"><button class="btn" id="bkc">Zavřít</button><button class="btn primary" id="bkcopy">📋 Kopírovat</button></div>`);
+  $("#bk", ov).value = json;
+  $("#bkc", ov).onclick = () => ov.remove();
+  $("#bkcopy", ov).onclick = async () => { try { await navigator.clipboard.writeText(json); toast("Zkopírováno"); } catch (e) { $("#bk", ov).select(); toast("Označeno – zkopíruj pomocí Ctrl+C"); } };
+}
+async function importBackup(file) {
+  let d; try { d = JSON.parse(await file.text()); } catch (e) { toast("Soubor nejde přečíst."); return; }
+  if (!d || !Array.isArray(d.areas) || !Array.isArray(d.words) || !d.areas.length) { toast("Tohle není záloha slovníčku."); return; }
+  const mode = await ask("Obnovit ze zálohy", `Záloha obsahuje ${d.areas.length} oblastí a ${d.words.length} slovíček.<br><br><b>Sloučit</b> = přidá chybějící k tvým současným.<br><b>Nahradit</b> = smaže současná data a nahradí je zálohou.`,
+    [{ label: "Zrušit", value: null }, { label: "Nahradit vše", value: "replace", cls: "danger" }, { label: "Sloučit", value: "merge", cls: "primary" }]);
+  if (!mode) return;
+  const clean = w => ({ id: w.id || uid(), areaId: w.areaId, en: String(w.en || ""), ipa: String(w.ipa || ""), cz: String(w.cz || ""), status: w.status === "umim" ? "umim" : "neumim", enCz: +w.enCz || 0, czEn: +w.czEn || 0, created: +w.created || Date.now() });
+  if (mode === "replace") {
+    S = { v: 1, areas: d.areas.map(a => ({ id: a.id, name: String(a.name) })), words: d.words.map(clean).filter(w => w.en), settings: Object.assign({}, S.settings, { practiceArea: "all" }) };
+    const ids = new Set(S.areas.map(a => a.id)); S.words.forEach(w => { if (!ids.has(w.areaId)) w.areaId = S.areas[0].id; });
+  } else {
+    const map = {};
+    d.areas.forEach(a => { let ex = S.areas.find(x => x.name.toLowerCase() === String(a.name).toLowerCase()); if (!ex) { ex = { id: uid(), name: String(a.name) }; S.areas.push(ex); } map[a.id] = ex.id; });
+    let added = 0;
+    d.words.map(clean).forEach(w => { if (!w.en) return; const aid = map[w.areaId] || S.areas[0].id;
+      if (!S.words.some(x => x.areaId === aid && x.en.toLowerCase() === w.en.toLowerCase())) { w.id = uid(); w.areaId = aid; S.words.push(w); added++; } });
+    toast(`Přidáno ${added} slovíček`);
+  }
+  save(); cur = null; renderAreas(); if (mode === "replace") toast("Data obnovena ze zálohy");
+}
+function restoreSeed() {
+  const have = new Set(S.words.map(w => w.en.toLowerCase()));
+  let n = 0;
+  [[SEED_AREA, SEED], [ISTQB_AREA, SEED_ISTQB]].forEach(([name, list]) => {
+    const add = list.filter(([en]) => !have.has(en.toLowerCase()));
+    if (!add.length) return;
+    let a = S.areas.find(x => x.name === name);
+    if (!a) { a = { id: uid(), name }; S.areas.push(a); }
+    add.forEach(([en, ipa, cz]) => { S.words.push(newWord(a.id, en, ipa, cz)); have.add(en.toLowerCase()); n++; });
+  });
+  save(); toast(n ? `Doplněno ${n} pojmů` : "Všechny výchozí pojmy už máš"); renderAreas();
+}
+
+/* ============ START ============ */
+async function boot() {
+  applyTheme();
+  $("#app").innerHTML = `<div class="panel empty"><div class="big">⏳</div><h3>Načítám slovníček…</h3></div>`;
+  let cloudOk = false;
+  if (hasClaude()) { try { cloudOk = await cloudInit(); } catch (e) { cloudOk = false; } }
+  if (cloudOk) {
+    try {
+      const st = await cloudLoad();
+      MODE = "cloud";
+      if (validState(st)) S = st;
+      else { S = readLocal() || initialState(); dirty = true; }   /* první spuštění: založ data na účtu */
+    } catch (e) {
+      MODE = "local"; setTimeout(() => toast("Účet se nepodařilo načíst – teď ukládám jen v tomto prohlížeči."), 300);
+    }
+  }
+  if (MODE === "local") S = readLocal() || initialState();
+  normalize();
+  if (MODE === "cloud") { if (dirty) flush(); } else saveLocal();
+  applyTheme(); setSync(); show("practice");
+}
+boot();
+</script>
+</body>
+</html>
