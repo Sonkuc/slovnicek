@@ -16,7 +16,7 @@ A flashcard app for learning English vocabulary. It ships with ready-made sets f
   - *Softwarová dokumentace* (Software documentation): 180 terms such as API, deployment and deprecated
   - *ISTQB – testování* (ISTQB testing): 147 terms from the ISTQB CTFL v4.0.1 syllabus, excluding terms already in the previous set
   - *Obecná angličtina* (General English): an empty area for your own words
-- **Smart word entry:** IPA pronunciation and a Czech translation are suggested automatically and can be edited.
+- **Smart word entry:** type an English term to get its IPA pronunciation and a Czech translation, or type only the Czech meaning to get the English equivalent and its pronunciation. All suggestions can be edited.
 - **Duplicate detection:** you get a warning while typing if a term already exists, including variant spellings ("Black-Box Testing" vs. "black-box testing") and singular/plural forms.
 - **Audio pronunciation:** played with the browser's built-in text-to-speech.
 - **Backup and restore:** export all data to a `.json` file and import it again, for example on another device.
@@ -36,10 +36,10 @@ All words and progress are stored **only in your browser** (localStorage) and ar
 
 ## Auto-fill
 
-When you add a word, the app sends **only the English term you typed** to two free public services:
+When you add a word, the app sends **only the term you typed** (English or Czech) to two free public services:
 
 - [Free Dictionary API](https://dictionaryapi.dev/): IPA pronunciation and an English definition
-- [MyMemory](https://mymemory.translated.net/): a suggested Czech translation
+- [MyMemory](https://mymemory.translated.net/): a suggested Czech translation, or an English equivalent when you start from Czech
 
 Auto-fill needs an internet connection. Without one, you enter the translation and pronunciation manually.
 

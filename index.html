@@ -776,13 +776,91 @@ function bindDupCheck(root, excludeId) {
   en.addEventListener("blur", check);
   return check;
 }
+/* Čeština → angličtina přes Clauda (na claude.ai) */
+async function aiLookupCz(czWord) {
+  if (!hasClaude()) return undefined;
+  let sample = null;
+  try { sample = await withTimeout(claude.use("sample"), 12000); } catch (e) { return undefined; }
+  if (!sample) return undefined;
+  const prompt = `Jsi česko-anglický slovník pro studentku angličtiny, která pracuje v IT jako testerka softwaru.
+Český výraz: ${JSON.stringify(czWord)}
+Najdi nejlepší anglický ekvivalent (pokud jde o odborný pojem z IT nebo testování, dej přednost odbornému termínu).
+Vrať POUZE JSON objekt v tomto tvaru:
+{"en":"anglický výraz","ipa":"britská výslovnost v IPA bez lomítek, slabiky oddělené tečkou, přízvuk ˈ","alts":[{"en":"jiný možný anglický výraz","ipa":"jeho výslovnost v IPA"}],"def":"krátká anglická definice"}
+V poli alts uveď nejvýš 3 položky.`;
+  try {
+    const v = await sample.json(prompt, { modelTier: "quick" });
+    const s = x => (typeof x === "string" ? x : "").trim();
+    const clip = x => s(x).replace(/^[\/\[]+|[\/\]]+$/g, "");
+    const r = { ok: true, en: s(v && v.en), ipa: clip(v && v.ipa), def: s(v && v.def),
+      alts: Array.isArray(v && v.alts) ? v.alts.map(a => (typeof a === "string" ? { en: s(a), ipa: "" } : { en: s(a && a.en), ipa: clip(a && a.ipa) })).filter(a => a.en).slice(0, 3) : [] };
+    if (!r.en) return { error: "⚠️ Claude nevrátil výsledek – doplň prosím ručně." };
+    return r;
+  } catch (e) {
+    const c = e && e.code;
+    if (c === "rate_limited") return { error: "⚠️ Příliš mnoho dotazů – zkus to za chvíli." };
+    if (c === "not_granted") return { error: "⚠️ Doplňování přes Clauda není povolené – doplň prosím ručně." };
+    return { error: "⚠️ Doplnění se nepovedlo – zkus to znovu nebo doplň ručně." };
+  }
+}
+/* Čeština → angličtina přes bezplatný překladač (verze mimo claude.ai) */
+async function translateToEn(czWord) {
+  try {
+    const d = await fetchJSON("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(czWord) + "&langpair=cs|en");
+    if (+d.responseStatus !== 200) return null;
+    const main = ((d.responseData && d.responseData.translatedText) || "").trim();
+    const alts = [];
+    for (const m of d.matches || []) {
+      const t = (m.translation || "").trim();
+      if (t && t.length < 60 && normEn(t) !== normEn(main) && normEn(t) !== normEn(czWord) && !alts.some(a => normEn(a) === normEn(t))) alts.push(t);
+    }
+    if (!main || normEn(main) === normEn(czWord)) return alts.length ? { en: alts[0], alts: alts.slice(1, 4) } : null;
+    return { en: main, alts: alts.slice(0, 3) };
+  } catch (e) { return null; }
+}
 /* Připojí k formuláři (root) chování tlačítka "Doplnit automaticky" */
 function bindAutofill(root) {
   const en = $("[name=en]", root), ipa = $("[name=ipa]", root), cz = $("[name=cz]", root);
   const st = $(".status", root), chips = $(".chips", root), def = $(".defbox", root), btn = $(".autofill", root);
+  /* doplní anglický výraz pole (en) a spustí kontrolu duplicit */
+  const setEn = v => { en.value = v; en.dispatchEvent(new Event("input")); en.dispatchEvent(new Event("blur")); };
+  /* Čeština → angličtina: vyplněný je jen český výraz */
+  async function runReverse(czWord) {
+    btn.disabled = true; st.textContent = "⏳ Hledám anglický výraz a výslovnost…"; chips.innerHTML = ""; def.innerHTML = "";
+    let r = null;
+    const ai = await aiLookupCz(czWord);
+    if (ai && ai.ok) r = ai;
+    else if (ai && ai.error) { btn.disabled = false; st.textContent = ai.error; return; }
+    else {
+      const tr = await translateToEn(czWord);
+      if (tr && tr.en) {
+        const di = await lookupIPA(tr.en);
+        r = { en: tr.en, ipa: di && di.ipa ? di.ipa : "", def: di && di.def ? di.def : "", alts: tr.alts.map(a => ({ en: a, ipa: "" })) };
+      }
+    }
+    btn.disabled = false;
+    if (!r || !r.en) { st.textContent = "⚠️ Anglický výraz nenalezen – doplň ho prosím ručně (nebo zkontroluj internet)."; return; }
+    setEn(r.en);
+    if (r.ipa) ipa.value = r.ipa;
+    if (r.def) def.innerHTML = `<div class="def">📖 <b>Anglická definice:</b> ${esc(r.def)}</div>`;
+    const alts = (r.alts || []).filter(a => a.en && normEn(a.en) !== normEn(r.en));
+    if (alts.length) {
+      chips.innerHTML = `<span class="small muted" style="align-self:center">Jiné anglické výrazy (klikni = použít):</span>` +
+        alts.map((a, i) => `<button type="button" class="chip" data-i="${i}">${esc(a.en)}</button>`).join("");
+      $$(".chip", chips).forEach(c => c.onclick = async () => {
+        const a = alts[+c.dataset.i]; setEn(a.en); ipa.value = a.ipa || "";
+        if (!a.ipa && !hasClaude()) { const di = await lookupIPA(a.en); if (di && di.ipa && en.value === a.en) ipa.value = di.ipa; }
+      });
+    }
+    st.textContent = r.ipa ? "✅ Doplněn anglický výraz a výslovnost – zkontroluj a případně uprav." : "✅ Doplněn anglický výraz, výslovnost nenalezena – doplň ji prosím ručně.";
+  }
   async function run() {
     const word = en.value.trim();
-    if (!word) { st.textContent = "Nejdřív napiš anglický výraz."; en.focus(); return; }
+    if (!word) {
+      const czWord = cz.value.trim();
+      if (czWord) return runReverse(czWord);
+      st.textContent = "Napiš anglický výraz, nebo jen český význam – druhý se doplní."; en.focus(); return;
+    }
     btn.disabled = true; st.textContent = "⏳ Hledám překlad a výslovnost…"; chips.innerHTML = ""; def.innerHTML = "";
     let ri = null, rt = null;
     const ai = await aiLookup(word);
@@ -1017,7 +1095,7 @@ function renderAdd() {
       <label class="f" style="margin-top:0">Oblast</label>
       <select name="area">${S.areas.map(a => `<option value="${a.id}" ${a.id === S.settings.addArea ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select>
       ${wordFormHTML({ en: "", ipa: "", cz: "" }, false)}
-      <div class="row" style="margin-top:14px"><span class="grow small muted">Napiš anglický výraz a stiskni Enter nebo „Doplnit automaticky“. Překlad a výslovnost můžeš upravit.</span>
+      <div class="row" style="margin-top:14px"><span class="grow small muted">Napiš anglický výraz, nebo jen český význam, a klikni na „Doplnit automaticky“ – zbytek se doplní. Vše můžeš upravit.</span>
       <button type="submit" class="btn primary">💾 Uložit slovíčko</button></div>
     </form>
     <div class="panel"><h3>Naposledy přidané</h3><div class="list">${recent.map(w => `<div class="item" data-id="${w.id}"><div class="grow"><span class="en">${esc(w.en)}</span><span class="ip">${ipaFmt(w.ipa)}</span><div class="cz">${esc(w.cz)}</div>
