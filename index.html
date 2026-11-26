@@ -147,6 +147,7 @@ select.inline{width:auto;padding:8px 10px}
     <div class="logo"><span>CZ↔EN</span> Slovníček</div>
     <nav id="nav">
       <button data-view="practice"><span class="ni">🎴</span> Procvičovat</button>
+      <button data-view="zero"><span class="ni">🌱</span> Od nuly</button>
       <button data-view="words"><span class="ni">📚</span> Slovíčka</button>
       <button data-view="add"><span class="ni">➕</span> Přidat</button>
       <button data-view="areas"><span class="ni">🗂️</span> Oblasti</button>
@@ -498,6 +499,57 @@ const SEED_ISTQB_ALL = [
 ["scribe","skraɪb","zapisovatel (při revizi)"],
 ["reviewer","rɪˈvjuː.ər","revizor; účastník revize, který hledá nedostatky"]
 ];
+/* Doplněno podle vzorových testů ISTQB CTFL v4.0 (sady A–D) */
+const SEED_ISTQB_ADD = [
+["software development lifecycle","ˈsɒft.weər dɪˈvel.əp.mənt ˈlaɪf.saɪ.kəl","životní cyklus vývoje softwaru (SDLC); fáze od požadavků po údržbu"],
+["Agile","ˈædʒ.aɪl","agilní (vývoj); práce v krátkých iteracích s častou zpětnou vazbou"],
+["iteration","ˌɪt.əˈreɪ.ʃən","iterace; krátký opakovaný vývojový cyklus (např. sprint)"],
+["release planning","rɪˈliːs ˌplæn.ɪŋ","plánování vydání; co a kdy bude v příští verzi produktu"],
+["iteration planning","ˌɪt.əˈreɪ.ʃən ˌplæn.ɪŋ","plánování iterace; výběr user stories a úkolů na další iteraci"],
+["burndown chart","ˈbɜːn.daʊn tʃɑːt","burndown graf; ukazuje zbývající práci v čase"],
+["INVEST","ɪnˈvest","INVEST; kritéria dobré user story (Independent, Negotiable, Valuable, Estimable, Small, Testable)"],
+["Given/When/Then","ˈɡɪv.ən wen ðen","Given/When/Then; formát scénáře v BDD (předpoklad / akce / očekávaný výsledek)"],
+["test management","ˈtest ˌmæn.ɪdʒ.mənt","řízení testování; plánování, sledování a řízení testovacích činností"],
+["test item","ˈtest ˌaɪ.təm","testovací položka; konkrétní část předmětu testu"],
+["user acceptance testing","ˈjuː.zər əkˈsep.təns ˈtes.tɪŋ","uživatelské akceptační testování (UAT); ověření budoucími uživateli"],
+["alpha testing","ˈæl.fə ˈtes.tɪŋ","alfa testování; testují uživatelé, ale v prostředí výrobce"],
+["beta testing","ˈbiː.tə ˈtes.tɪŋ","beta testování; testují uživatelé ve svém vlastním prostředí"],
+["regulatory acceptance testing","ˈreɡ.jə.lə.tər.i əkˈsep.təns ˈtes.tɪŋ","regulatorní akceptační testování; ověření souladu s předpisy a normami"],
+["performance testing","pəˈfɔː.məns ˈtes.tɪŋ","výkonnostní testování; rychlost a chování systému pod zátěží"],
+["security testing","sɪˈkjʊə.rə.ti ˈtes.tɪŋ","bezpečnostní testování; hledání zranitelností"],
+["usability testing","ˌjuː.zəˈbɪl.ə.ti ˈtes.tɪŋ","testování použitelnosti; jak snadno se produkt používá"],
+["testability","ˌtes.təˈbɪl.ə.ti","testovatelnost; jak snadno lze něco otestovat"],
+["equivalence partition","ɪˈkwɪv.əl.əns pɑːˈtɪʃ.ən","třída ekvivalence; skupina hodnot, se kterými se systém chová stejně"],
+["valid partition","ˈvæl.ɪd pɑːˈtɪʃ.ən","platná třída ekvivalence (hodnoty, které má systém přijmout)"],
+["invalid partition","ɪnˈvæl.ɪd pɑːˈtɪʃ.ən","neplatná třída ekvivalence (hodnoty, které má systém odmítnout)"],
+["2-value boundary value analysis","ˈtuː ˌvæl.juː ˈbaʊn.dər.i ˈvæl.juː əˈnæl.ə.sɪs","dvouhodnotová analýza hraničních hodnot; testuje hranici a nejbližší hodnotu za ní"],
+["3-value boundary value analysis","ˈθriː ˌvæl.juː ˈbaʊn.dər.i ˈvæl.juː əˈnæl.ə.sɪs","tříhodnotová analýza hraničních hodnot; testuje hranici a obě sousední hodnoty"],
+["branch testing","ˈbrɑːntʃ ˌtes.tɪŋ","testování větví; testy navržené tak, aby prošly všemi větvemi kódu"],
+["statement testing","ˈsteɪt.mənt ˌtes.tɪŋ","testování příkazů; testy navržené tak, aby se provedly všechny příkazy kódu"],
+["code coverage","ˈkəʊd ˌkʌv.ər.ɪdʒ","pokrytí kódu; podíl kódu provedeného testy"],
+["fault attack","ˈfɔːlt əˌtæk","útok na chyby; cílené testy na typická selhání (forma odhadování chyb)"],
+["review leader","rɪˈvjuː ˌliː.dər","vedoucí revize; odpovídá za celkový průběh revize"],
+["individual review","ˌɪn.dɪˈvɪdʒ.u.əl rɪˈvjuː","individuální revize; každý revizor sám prochází pracovní produkt"],
+["author","ˈɔː.θər","autor (pracovního produktu, který se reviduje)"],
+["impact analysis","ˈɪm.pækt əˌnæl.ə.sɪs","analýza dopadu; zjištění, co všechno změna ovlivní"],
+["defect density","ˈdiː.fekt ˌden.sə.ti","hustota defektů; počet defektů vzhledem k velikosti produktu"],
+["version control","ˈvɜː.ʃən kənˌtrəʊl","správa verzí (např. git)"],
+["deliverable","dɪˈlɪv.ər.ə.bəl","předávaný výstup projektu (dokument, software…)"],
+["reproduce","ˌriː.prəˈdjuːs","reprodukovat; zopakovat (např. kroky vedoucí k defektu)"],
+["residual risk","rɪˈzɪdʒ.u.əl ˈrɪsk","zbytkové riziko; riziko, které zůstane po zmírňujících opatřeních"],
+["contingency plan","kənˈtɪn.dʒən.si plæn","záložní (krizový) plán pro případ, že riziko nastane"],
+["quality control","ˈkwɒl.ə.ti kənˌtrəʊl","kontrola kvality (QC); činnosti hledající vady v produktu, např. testování"],
+["lessons learned","ˌles.ənz ˈlɜːnd","poučení ze zkušeností; co příště udělat lépe"],
+["exhaustive testing","ɪɡˈzɔː.stɪv ˈtes.tɪŋ","úplné testování všech kombinací vstupů (v praxi nemožné)"],
+["defect clustering","ˈdiː.fekt ˌklʌs.tər.ɪŋ","shlukování defektů; většina defektů bývá v malém počtu modulů"],
+["absence-of-defects fallacy","ˈæb.səns əv ˈdiː.fekts ˈfæl.ə.si","klam o nepřítomnosti defektů; bezchybný systém nemusí splňovat potřeby uživatelů"],
+["early testing","ˈɜː.li ˈtes.tɪŋ","včasné testování; testovat co nejdříve, šetří čas i peníze"],
+["testing principles","ˈtes.tɪŋ ˈprɪn.sə.pəlz","principy testování (7 základních zásad podle ISTQB)"],
+["end user","ˌend ˈjuː.zər","koncový uživatel"],
+["business representative","ˈbɪz.nɪs ˌrep.rɪˈzen.tə.tɪv","zástupce byznysu (zákazníka); určuje požadavky a akceptační kritéria"],
+["CI/CD pipeline","ˌsiː.aɪ ˌsiː.diː ˈpaɪp.laɪn","CI/CD pipeline; automatizovaný řetězec sestavení, testování a nasazení"]
+];
+SEED_ISTQB_ALL.push(...SEED_ISTQB_ADD);
 /* pouze pojmy, které nejsou v oblasti Softwarová dokumentace (porovnává i tvary jako debug/debugging) */
 const SEED_ISTQB = (() => {
   const have = new Set(SEED.map(x => x[0].toLowerCase()));
@@ -514,18 +566,29 @@ function initialState() {
   const a0 = { id: uid(), name: GENERAL_AREA }, a1 = { id: uid(), name: SEED_AREA }, a2 = { id: uid(), name: ISTQB_AREA };
   return { v: 1, areas: [a0, a1, a2],
            words: [...SEED.map(([en, ipa, cz]) => newWord(a1.id, en, ipa, cz)), ...SEED_ISTQB.map(([en, ipa, cz]) => newWord(a2.id, en, ipa, cz))],
-           settings: { theme: null, practiceArea: "all", addArea: a0.id, seedV: 2 } };
+           settings: { theme: null, practiceArea: "all", addArea: a0.id, seedV: 3 } };
 }
 /* Aktualizace starších dat: přidá oblast ISTQB a dá Obecnou angličtinu na první místo (pokrok zůstane zachován) */
 function migrate() {
-  if ((S.settings.seedV || 1) >= 2) return;
+  if ((S.settings.seedV || 1) === 2) {   /* v3: nové pojmy ze vzorových testů ISTQB */
+    let a = S.areas.find(x => x.name === ISTQB_AREA);
+    if (!a) { a = { id: uid(), name: ISTQB_AREA }; S.areas.push(a); }
+    const have = new Set(S.words.map(w => normEn(w.en)));
+    const add = new Set(SEED_ISTQB_ADD.map(x => x[0]));
+    let n = 0;
+    SEED_ISTQB.forEach(([en, ipa, cz]) => { if (add.has(en) && !have.has(normEn(en))) { S.words.push(newWord(a.id, en, ipa, cz)); n++; } });
+    S.settings.seedV = 3; save();
+    if (n) setTimeout(() => toast(`Do oblasti ISTQB přibylo ${n} nových pojmů ze vzorových testů`), 600);
+    return;
+  }
+  if ((S.settings.seedV || 1) >= 3) return;
   let a = S.areas.find(x => x.name === ISTQB_AREA);
   if (!a) { a = { id: uid(), name: ISTQB_AREA }; S.areas.push(a); }
   const have = new Set(S.words.map(w => w.en.toLowerCase()));
   SEED_ISTQB.forEach(([en, ipa, cz]) => { if (!have.has(en.toLowerCase())) S.words.push(newWord(a.id, en, ipa, cz)); });
   const gi = S.areas.findIndex(x => x.name === GENERAL_AREA);
   if (gi > 0) S.areas.unshift(S.areas.splice(gi, 1)[0]);
-  S.settings.seedV = 2; save();
+  S.settings.seedV = 3; save();
 }
 let S = null, storageWarned = false;
 let MODE = "local";            // "cloud" = účet Claude, "local" = jen tento prohlížeč
@@ -906,9 +969,13 @@ function wordFormHTML(w, withAreaStatus) {
 
 /* ============ NAVIGACE ============ */
 let view = "practice";
-function show(v) { if (!S) return; view = v; $$("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v)); render(); window.scrollTo(0, 0); }
+async function show(v) {
+  if (!S) return;
+  if (view === "zero" && v !== "zero" && Z && !(await zConfirmLeave())) return;   /* upozornění při odchodu z rozjetého kola */
+  view = v; $$("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v)); render(); window.scrollTo(0, 0);
+}
 $$("#nav button").forEach(b => b.onclick = () => show(b.dataset.view));
-function render() { ({ practice: renderPractice, words: renderWords, add: renderAdd, areas: renderAreas })[view](); }
+function render() { ({ practice: renderPractice, zero: renderZero, words: renderWords, add: renderAdd, areas: renderAreas })[view](); }
 
 /* Motiv */
 function applyTheme() {
@@ -930,15 +997,46 @@ function pickCard() {
   const needs = []; if (cur.enCz < 2) needs.push("en"); if (cur.czEn < 2) needs.push("cz"); if (!needs.length) needs.push("en", "cz");
   curDir = needs[Math.floor(Math.random() * needs.length)];
 }
+/* společné vyhodnocení odpovědi; vrací true, když se slovíčko přesunulo do Umím */
+function scoreAnswer(w, dir, ok) {
+  if (ok) {
+    if (dir === "en") w.enCz++; else w.czEn++;
+    if (w.enCz >= 2 && w.czEn >= 2) { w.status = "umim"; toast(`🎉 „${w.en}“ přesunuto do složky Umím`); return true; }
+  } else { w.enCz = 0; w.czEn = 0; }
+  return false;
+}
+const pickDir = w => { const n = []; if (w.enCz < 2) n.push("en"); if (w.czEn < 2) n.push("cz"); if (!n.length) n.push("en", "cz"); return n[Math.floor(Math.random() * n.length)]; };
 function answer(ok) {
   if (!cur) return;
   const w = cur;
-  if (ok) {
-    if (curDir === "en") w.enCz++; else w.czEn++;
-    sess.ok++;
-    if (w.enCz >= 2 && w.czEn >= 2) { w.status = "umim"; toast(`🎉 „${w.en}“ přesunuto do složky Umím`); }
-  } else { w.enCz = 0; w.czEn = 0; sess.bad++; }
+  scoreAnswer(w, curDir, ok);
+  if (ok) sess.ok++; else sess.bad++;
   lastId = w.id; save(); pickCard(); renderPractice();
+}
+/* kartička + tlačítka ✓/✗ (stejná pro běžné procvičování i „Od nuly“) */
+function cardStageHTML(w, dir) {
+  const en = dir === "en";
+  const front = en
+    ? `<div class="tag">Angličtina → čeština</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
+       <button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button><div class="hint">Klikni na kartu pro otočení</div>`
+    : `<div class="tag">Čeština → angličtina</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div><div class="hint">Klikni na kartu pro otočení</div>`;
+  const back = en
+    ? `<div class="tag">Český význam</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div>
+       <div class="ipa">${ipaFmt(w.ipa)}</div><div class="sub">${esc(w.en)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`
+    : `<div class="tag">Anglicky</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
+       <div class="ipa">${ipaFmt(w.ipa)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`;
+  return `<div class="stage">
+    <div class="card-wrap"><div class="card" id="card"><div class="face front">${front}</div><div class="face back">${back}</div></div></div>
+    <div class="answers"><button class="ans ok" id="bOk" title="Znala jsem">✓</button><button class="ans bad" id="bBad" title="Neznala jsem">✗</button></div>
+    <div class="progress"><span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span><span class="areatag">${esc(areaName(w.areaId))}</span></div>
+    <div class="kbd">Klávesy: mezerník = otočit · ← = ✓ znám · → = ✗ neznám</div></div>`;
+}
+function bindCardStage(w, onAnswer) {
+  const card = $("#card");
+  card.onclick = e => { if (e.target.closest("[data-say]")) return; flipped = !flipped; card.classList.toggle("flipped", flipped); };
+  $$("[data-say]", card).forEach(b => b.onclick = e => { e.stopPropagation(); speak(w.en); });
+  $("#bOk").onclick = () => onAnswer(true);
+  $("#bBad").onclick = () => onAnswer(false);
 }
 const dots = n => `<span class="dots"><span class="dot ${n >= 1 ? "on" : ""}"></span><span class="dot ${n >= 2 ? "on" : ""}"></span></span>`;
 function renderPractice() {
@@ -962,36 +1060,117 @@ function renderPractice() {
     $("#app").innerHTML = html;
     $("#goAdd").onclick = () => show("add");
   } else {
-    const w = cur, en = curDir === "en";
-    const front = en
-      ? `<div class="tag">Angličtina → čeština</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
-         <button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button><div class="hint">Klikni na kartu pro otočení</div>`
-      : `<div class="tag">Čeština → angličtina</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div><div class="hint">Klikni na kartu pro otočení</div>`;
-    const back = en
-      ? `<div class="tag">Český význam</div><div class="term ${sizeClass(w.cz)}">${esc(w.cz || "(bez překladu)")}</div>
-         <div class="ipa">${ipaFmt(w.ipa)}</div><div class="sub">${esc(w.en)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`
-      : `<div class="tag">Anglicky</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
-         <div class="ipa">${ipaFmt(w.ipa)}</div><button class="icon-btn speak" data-say="1" title="Přehrát výslovnost">🔊</button>`;
-    html += `<div class="stage">
-      <div class="card-wrap"><div class="card" id="card"><div class="face front">${front}</div><div class="face back">${back}</div></div></div>
-      <div class="answers"><button class="ans ok" id="bOk" title="Znala jsem">✓</button><button class="ans bad" id="bBad" title="Neznala jsem">✗</button></div>
-      <div class="progress"><span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span><span class="areatag">${esc(areaName(w.areaId))}</span></div>
-      <div class="kbd">Klávesy: mezerník = otočit · ← = ✓ znám · → = ✗ neznám</div></div>`;
+    html += cardStageHTML(cur, curDir);
     $("#app").innerHTML = html;
-    const card = $("#card");
-    card.onclick = e => { if (e.target.closest("[data-say]")) return; flipped = !flipped; card.classList.toggle("flipped", flipped); };
-    $$("[data-say]", card).forEach(b => b.onclick = e => { e.stopPropagation(); speak(w.en); });
-    $("#bOk").onclick = () => answer(true);
-    $("#bBad").onclick = () => answer(false);
+    bindCardStage(cur, answer);
   }
   $("#pArea").onchange = e => { S.settings.practiceArea = e.target.value; save(); cur = null; renderPractice(); };
 }
 document.addEventListener("keydown", e => {
-  if (view !== "practice" || $(".overlay") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
-  if (e.key === " " || e.key === "Enter") { const c = $("#card"); if (c) { e.preventDefault(); flipped = !flipped; c.classList.toggle("flipped", flipped); } }
-  else if (e.key === "ArrowLeft") answer(true);
-  else if (e.key === "ArrowRight") answer(false);
+  if ((view !== "practice" && view !== "zero") || $(".overlay") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  if (!$("#card")) return;
+  const ans = view === "zero" ? zAnswer : answer;
+  if (e.key === " " || e.key === "Enter") { const c = $("#card"); e.preventDefault(); flipped = !flipped; c.classList.toggle("flipped", flipped); }
+  else if (e.key === "ArrowLeft") ans(true);
+  else if (e.key === "ArrowRight") ans(false);
 });
+
+/* ============ UČÍM SE OD NULY ============ */
+/* Z = rozjeté kolo (jen v paměti – po odchodu se zahodí) */
+let Z = null, zPrev = new Set();   /* zPrev = slovíčka z minulého kola, příště se přednostně vynechají */
+const zAreaWords = areaId => S.words.filter(w => w.status === "neumim" && (areaId === "all" || w.areaId === areaId));
+function zTakeNew(n) {   /* náhodná slovíčka z oblasti, která v tomto kole ještě nebyla */
+  let cand = zAreaWords(Z.areaId).filter(w => !Z.seen.has(w.id));
+  const fresh = cand.filter(w => !zPrev.has(w.id));
+  if (fresh.length >= n) cand = fresh;
+  const out = [];
+  while (out.length < n && cand.length) { const i = Math.floor(Math.random() * cand.length); out.push(cand.splice(i, 1)[0]); }
+  out.forEach(w => { Z.seen.add(w.id); Z.active.push(w.id); });
+  return out.length;
+}
+function zActiveWords() {   /* jen slovíčka, která ve skupině pořád jsou a patří do Neumím */
+  Z.active = Z.active.filter(id => { const w = S.words.find(x => x.id === id); return w && w.status === "neumim"; });
+  return Z.active.map(id => S.words.find(x => x.id === id));
+}
+function zPick() {
+  flipped = false;
+  let act = zActiveWords();
+  const missing = Z.size - act.length;
+  if (missing > 0) { Z.added += zTakeNew(missing); act = zActiveWords(); }
+  if (!act.length) { Z.cur = null; return; }
+  const c = act.length > 1 ? act.filter(w => w.id !== Z.lastId) : act;
+  const w = c[Math.floor(Math.random() * c.length)];
+  Z.cur = w.id; Z.dir = pickDir(w);
+}
+function zEndRound() { if (Z) zPrev = new Set(Z.seen); Z = null; }
+function zStart(areaId, size) {
+  S.settings.zeroArea = areaId; S.settings.zeroSize = size; save();
+  Z = { areaId, size, active: [], seen: new Set(), learned: 0, added: 0, ok: 0, bad: 0, cur: null, dir: "en", lastId: null };
+  zTakeNew(size); zPick(); renderZero();
+}
+function zAnswer(ok) {
+  if (!Z || !Z.cur) return;
+  const w = S.words.find(x => x.id === Z.cur); if (!w) { zPick(); renderZero(); return; }
+  const moved = scoreAnswer(w, Z.dir, ok);
+  if (ok) Z.ok++; else Z.bad++;
+  if (moved) {
+    Z.learned++;
+    const before = Z.added;
+    Z.lastId = w.id; save(); zPick();
+    if (Z.added > before) setTimeout(() => toast("➕ Do skupiny přibylo nové slovíčko"), 1600);
+  } else { Z.lastId = w.id; save(); zPick(); }
+  renderZero();
+}
+/* potvrzení odchodu z rozjetého kola */
+function zConfirmLeave() {
+  if (!Z) return Promise.resolve(true);
+  const an = Z.areaId === "all" ? "ze všech oblastí" : `z oblasti „${esc(areaName(Z.areaId))}“`;
+  return ask("Opravdu odejít?", `Pokud teď odejdeš, toto kolo skončí a příště dostaneš jiná slovíčka ${an} se štítkem „Neumím“.<br><br>Pokrok u slovíček, která jsi už procvičila, zůstane uložený.`,
+    [{ label: "Zůstat", value: false, cls: "primary" }, { label: "Odejít", value: true }]).then(v => { if (v) zEndRound(); return !!v; });
+}
+window.addEventListener("beforeunload", e => { if (Z && view === "zero") { e.preventDefault(); e.returnValue = ""; } });
+function renderZero() {
+  if (!Z) return renderZeroSetup();
+  if (Z.areaId !== "all" && !areaById(Z.areaId)) { Z = null; return renderZeroSetup(); }
+  if (!Z.cur || !Z.active.includes(Z.cur)) zPick();
+  const left = zAreaWords(Z.areaId).filter(w => !Z.seen.has(w.id)).length;
+  const act = zActiveWords().length;
+  let html = `<div class="p-top">
+    <div class="grow"><b>🌱 Učím se od nuly</b> <span class="muted small">· ${esc(Z.areaId === "all" ? "Všechny oblasti" : areaName(Z.areaId))}</span></div>
+    <button class="btn sm" id="zEnd">Ukončit kolo</button></div>
+    <div class="stats" style="margin-bottom:16px"><span class="pill">Ve skupině: ${act}</span><span class="pill ok">Naučeno: ${Z.learned}</span>
+      <span class="pill">Nových v oblasti zbývá: ${left}</span><span class="pill ok">✓ ${Z.ok}</span><span class="pill bad">✗ ${Z.bad}</span></div>`;
+  const w = Z.cur && S.words.find(x => x.id === Z.cur);
+  if (!w) {
+    html += `<div class="panel empty"><div class="big">🎉</div><h3>Hotovo! Všechna slovíčka z této oblasti umíš.</h3>
+      <p class="muted">V tomto kole ses naučila ${Z.learned} slovíček.</p><button class="btn primary" id="zNew">Začít znovu</button></div>`;
+    $("#app").innerHTML = html;
+    $("#zNew").onclick = () => { zEndRound(); renderZero(); };
+  } else {
+    html += cardStageHTML(w, Z.dir);
+    $("#app").innerHTML = html;
+    bindCardStage(w, zAnswer);
+  }
+  $("#zEnd").onclick = async () => { if (await zConfirmLeave()) renderZero(); };
+}
+function renderZeroSetup() {
+  const cnt = id => zAreaWords(id).length;
+  const sel = S.settings.zeroArea && (S.settings.zeroArea === "all" || areaById(S.settings.zeroArea)) ? S.settings.zeroArea : (S.areas.find(a => cnt(a.id)) || S.areas[0]).id;
+  const size = S.settings.zeroSize || 20;
+  $("#app").innerHTML = `<h2>🌱 Učím se od nuly</h2>
+    <div class="panel">
+      <p class="muted" style="margin-top:0">Procvičuješ jen malou skupinu slovíček najednou. Když se nějaké slovíčko naučíš (přesune se do „Umím“), do skupiny přibude nové z vybrané oblasti. Každé nové kolo začíná s jinými slovíčky.</p>
+      <label class="f">Oblast</label>
+      <select id="zArea"><option value="all" ${sel === "all" ? "selected" : ""}>Všechny oblasti (${cnt("all")} neumím)</option>
+        ${S.areas.map(a => `<option value="${a.id}" ${a.id === sel ? "selected" : ""}>${esc(a.name)} (${cnt(a.id)} neumím)</option>`).join("")}</select>
+      <label class="f">Kolik slovíček procvičovat najednou</label>
+      <select id="zSize">${[10, 15, 20, 25, 30].map(n => `<option value="${n}" ${n === size ? "selected" : ""}>${n}</option>`).join("")}</select>
+      <div class="row" style="margin-top:16px"><span class="grow status muted" id="zMsg"></span><button class="btn primary" id="zGo">▶ Začít procvičovat</button></div>
+    </div>`;
+  const upd = () => { const n = cnt($("#zArea").value); $("#zGo").disabled = !n; $("#zMsg").textContent = n ? "" : "V této oblasti nejsou žádná slovíčka se štítkem „Neumím“."; };
+  $("#zArea").onchange = upd; upd();
+  $("#zGo").onclick = () => zStart($("#zArea").value, +$("#zSize").value);
+}
 
 /* ============ SEZNAM SLOVÍČEK ============ */
 let W = { area: "all", tab: "neumim", q: "", sel: new Set() };

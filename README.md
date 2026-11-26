@@ -10,11 +10,12 @@ A flashcard app for learning English vocabulary. It ships with ready-made sets f
 
 - **Flip cards:** the term on the front; the translation and pronunciation on the back. Click a card to flip it.
 - **Two-way practice:** English → Czech and Czech → English.
+- **Learning from scratch (*Od nuly*):** practise a small set of unknown words at a time (10–30, 20 by default). Each time you learn a word, a new one from the chosen area joins the set. Every new round starts with different words, and the app warns you before you leave a round in progress.
 - **Progress tracking:** mark each answer ✓ or ✗. A word moves to *Umím* ("I know") after two correct answers in a row in each direction. A wrong answer resets its progress.
 - **Topic areas:** create, rename, reorder and delete your own areas. Move words between areas, one at a time or in bulk.
 - **Built-in vocabulary:**
   - *Softwarová dokumentace* (Software documentation): 180 terms such as API, deployment and deprecated
-  - *ISTQB – testování* (ISTQB testing): 147 terms from the ISTQB CTFL v4.0.1 syllabus, excluding terms already in the previous set
+  - *ISTQB – testování* (ISTQB testing): 194 terms from the ISTQB CTFL v4.0.1 syllabus and the official CTFL v4.0 sample exams (A–D), excluding terms already in the previous set
   - *Obecná angličtina* (General English): an empty area for your own words
 - **Smart word entry:** type an English term to get its IPA pronunciation and a Czech translation, or type only the Czech meaning to get the English equivalent and its pronunciation. All suggestions can be edited.
 - **Duplicate detection:** you get a warning while typing if a term already exists, including variant spellings ("Black-Box Testing" vs. "black-box testing") and singular/plural forms.
