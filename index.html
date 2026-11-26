@@ -988,14 +988,23 @@ $("#themeBtn").onclick = () => { if (!S) return; S.settings.theme = document.bod
 
 /* ============ PROCVIČOVÁNÍ ============ */
 let cur = null, curDir = "en", flipped = false, lastId = null, sess = { ok: 0, bad: 0 };
-function pool() { const a = S.settings.practiceArea; return S.words.filter(w => w.status === "neumim" && (a === "all" || w.areaId === a)); }
+/* Opakování složky Umím: stačí 1× správně v každém směru (pokrok jen pro aktuální kolo, v paměti) */
+let rev = { key: "", done: new Set(), prog: {} };
+const isReview = () => S.settings.practiceSet === "umim";
+function revRound() { const k = S.settings.practiceArea; if (rev.key !== k) rev = { key: k, done: new Set(), prog: {} }; return rev; }
+const revProg = id => revRound().prog[id] || (rev.prog[id] = { en: false, cz: false });
+function pool() {
+  const a = S.settings.practiceArea, inArea = w => a === "all" || w.areaId === a;
+  if (isReview()) { const r = revRound(); return S.words.filter(w => w.status === "umim" && inArea(w) && !r.done.has(w.id)); }
+  return S.words.filter(w => w.status === "neumim" && inArea(w));
+}
 function pickCard() {
   const p = pool(); flipped = false;
   if (!p.length) { cur = null; return; }
   const c = p.length > 1 ? p.filter(w => w.id !== lastId) : p;
   cur = c[Math.floor(Math.random() * c.length)];
-  const needs = []; if (cur.enCz < 2) needs.push("en"); if (cur.czEn < 2) needs.push("cz"); if (!needs.length) needs.push("en", "cz");
-  curDir = needs[Math.floor(Math.random() * needs.length)];
+  if (isReview()) { const g = revProg(cur.id), n = []; if (!g.en) n.push("en"); if (!g.cz) n.push("cz"); if (!n.length) n.push("en", "cz"); curDir = n[Math.floor(Math.random() * n.length)]; }
+  else curDir = pickDir(cur);
 }
 /* společné vyhodnocení odpovědi; vrací true, když se slovíčko přesunulo do Umím */
 function scoreAnswer(w, dir, ok) {
@@ -1009,12 +1018,23 @@ const pickDir = w => { const n = []; if (w.enCz < 2) n.push("en"); if (w.czEn < 
 function answer(ok) {
   if (!cur) return;
   const w = cur;
+  if (isReview()) {
+    if (ok) {
+      const g = revProg(w.id); g[curDir] = true;
+      if (g.en && g.cz) { rev.done.add(w.id); toast(`✔ „${w.en}“ zopakováno – zůstává v Umím`); }
+      sess.ok++;
+    } else {
+      setStatus(w, "neumim"); delete rev.prog[w.id]; sess.bad++;
+      toast(`↩️ „${w.en}“ vráceno do složky Neumím`);
+    }
+    lastId = w.id; save(); pickCard(); renderPractice(); return;
+  }
   scoreAnswer(w, curDir, ok);
   if (ok) sess.ok++; else sess.bad++;
   lastId = w.id; save(); pickCard(); renderPractice();
 }
 /* kartička + tlačítka ✓/✗ (stejná pro běžné procvičování i „Od nuly“) */
-function cardStageHTML(w, dir) {
+function cardStageHTML(w, dir, review) {
   const en = dir === "en";
   const front = en
     ? `<div class="tag">Angličtina → čeština</div><div class="term ${sizeClass(w.en)}">${esc(w.en)}</div>
@@ -1028,7 +1048,9 @@ function cardStageHTML(w, dir) {
   return `<div class="stage">
     <div class="card-wrap"><div class="card" id="card"><div class="face front">${front}</div><div class="face back">${back}</div></div></div>
     <div class="answers"><button class="ans ok" id="bOk" title="Znala jsem">✓</button><button class="ans bad" id="bBad" title="Neznala jsem">✗</button></div>
-    <div class="progress"><span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span><span class="areatag">${esc(areaName(w.areaId))}</span></div>
+    <div class="progress">${review
+      ? `<span>EN→CZ ${dots(review.en ? 1 : 0, 1)}</span><span>CZ→EN ${dots(review.cz ? 1 : 0, 1)}</span>`
+      : `<span>EN→CZ ${dots(w.enCz)}</span><span>CZ→EN ${dots(w.czEn)}</span>`}<span class="areatag">${esc(areaName(w.areaId))}</span></div>
     <div class="kbd">Klávesy: mezerník = otočit · ← = ✓ znám · → = ✗ neznám</div></div>`;
 }
 function bindCardStage(w, onAnswer) {
@@ -1038,20 +1060,35 @@ function bindCardStage(w, onAnswer) {
   $("#bOk").onclick = () => onAnswer(true);
   $("#bBad").onclick = () => onAnswer(false);
 }
-const dots = n => `<span class="dots"><span class="dot ${n >= 1 ? "on" : ""}"></span><span class="dot ${n >= 2 ? "on" : ""}"></span></span>`;
+const dots = (n, max = 2) => `<span class="dots">${Array.from({ length: max }, (_, i) => `<span class="dot ${n > i ? "on" : ""}"></span>`).join("")}</span>`;
 function renderPractice() {
   if (S.settings.practiceArea !== "all" && !areaById(S.settings.practiceArea)) S.settings.practiceArea = "all";
   if (!cur || !pool().some(w => w.id === cur.id)) pickCard();
   const cnt = (id, st) => S.words.filter(w => w.status === st && (id === "all" || w.areaId === id)).length;
-  const a = S.settings.practiceArea;
-  let html = `<div class="p-top">
+  const a = S.settings.practiceArea, R = isReview(), set = R ? "umim" : "neumim";
+  const left = R ? pool().length : 0;
+  let html = `<div class="tabs" style="margin-top:0">
+      <button class="tab ${R ? "" : "active"}" data-set="neumim">❌ Učit se (Neumím)</button>
+      <button class="tab ${R ? "active" : ""}" data-set="umim">✅ Opakovat (Umím)</button></div>
+    <div class="p-top">
     <select class="inline" id="pArea">
-      <option value="all">Všechny oblasti (${cnt("all", "neumim")})</option>
-      ${S.areas.map(x => `<option value="${x.id}" ${x.id === a ? "selected" : ""}>${esc(x.name)} (${cnt(x.id, "neumim")})</option>`).join("")}
+      <option value="all">Všechny oblasti (${cnt("all", set)})</option>
+      ${S.areas.map(x => `<option value="${x.id}" ${x.id === a ? "selected" : ""}>${esc(x.name)} (${cnt(x.id, set)})</option>`).join("")}
     </select>
-    <div class="stats grow"><span class="pill">Neumím: ${cnt(a, "neumim")}</span><span class="pill">Umím: ${cnt(a, "umim")}</span>
-      <span class="pill ok">✓ ${sess.ok}</span><span class="pill bad">✗ ${sess.bad}</span></div></div>`;
-  if (!cur) {
+    <div class="stats grow">${R
+      ? `<span class="pill">Zbývá zopakovat: ${left}</span><span class="pill ok">Zopakováno: ${revRound().done.size}</span>`
+      : `<span class="pill">Neumím: ${cnt(a, "neumim")}</span><span class="pill">Umím: ${cnt(a, "umim")}</span>`}
+      <span class="pill ok">✓ ${sess.ok}</span><span class="pill bad">✗ ${sess.bad}</span></div></div>
+    ${R ? `<p class="small muted" style="margin:-6px 0 14px">Opakování: stačí 1× správně v každém směru. Při ✗ se slovíčko vrátí do Neumím.</p>` : ""}`;
+  if (!cur && R) {
+    const total = cnt(a, "umim") + rev.done.size;
+    html += `<div class="panel empty"><div class="big">${rev.done.size ? "🎉" : "📭"}</div>
+      <h3>${rev.done.size ? "Všechno ze složky Umím je zopakované!" : "Ve složce Umím v této oblasti zatím nic není."}</h3>
+      <p class="muted">${rev.done.size ? `Zopakováno ${rev.done.size} slovíček.` : "Slovíčka se sem dostanou, když je v procvičování 2× správně přeložíš v obou směrech."}</p>
+      ${cnt(a, "umim") ? `<button class="btn primary" id="revAgain">↻ Opakovat znovu</button>` : ""}</div>`;
+    $("#app").innerHTML = html;
+    const ra = $("#revAgain"); if (ra) ra.onclick = () => { rev = { key: a, done: new Set(), prog: {} }; cur = null; renderPractice(); };
+  } else if (!cur) {
     const total = S.words.filter(w => a === "all" || w.areaId === a).length;
     html += `<div class="panel empty"><div class="big">${total ? "🎉" : "📭"}</div>
       <h3>${total ? "Všechno v této oblasti umíš!" : "V této oblasti zatím nejsou slovíčka."}</h3>
@@ -1060,11 +1097,13 @@ function renderPractice() {
     $("#app").innerHTML = html;
     $("#goAdd").onclick = () => show("add");
   } else {
-    html += cardStageHTML(cur, curDir);
+    html += cardStageHTML(cur, curDir, R ? revProg(cur.id) : null);
     $("#app").innerHTML = html;
     bindCardStage(cur, answer);
   }
   $("#pArea").onchange = e => { S.settings.practiceArea = e.target.value; save(); cur = null; renderPractice(); };
+  $$("[data-set]").forEach(b => b.onclick = () => { if (S.settings.practiceSet === b.dataset.set || (!S.settings.practiceSet && b.dataset.set === "neumim")) return;
+    S.settings.practiceSet = b.dataset.set; save(); cur = null; lastId = null; renderPractice(); });
 }
 document.addEventListener("keydown", e => {
   if ((view !== "practice" && view !== "zero") || $(".overlay") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;

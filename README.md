@@ -10,6 +10,7 @@ A flashcard app for learning English vocabulary. It ships with ready-made sets f
 
 - **Flip cards:** the term on the front; the translation and pronunciation on the back. Click a card to flip it.
 - **Two-way practice:** English → Czech and Czech → English.
+- **Review mode (*Opakovat – Umím*):** check that you still remember words you already know. One correct answer in each direction is enough; a wrong answer moves the word back to *Neumím* ("I don't know").
 - **Learning from scratch (*Od nuly*):** practise a small set of unknown words at a time (10–30, 20 by default). Each time you learn a word, a new one from the chosen area joins the set. Every new round starts with different words, and the app warns you before you leave a round in progress.
 - **Progress tracking:** mark each answer ✓ or ✗. A word moves to *Umím* ("I know") after two correct answers in a row in each direction. A wrong answer resets its progress.
 - **Topic areas:** create, rename, reorder and delete your own areas. Move words between areas, one at a time or in bulk.
