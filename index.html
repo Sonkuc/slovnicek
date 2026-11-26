@@ -57,7 +57,10 @@ select.inline{width:auto;padding:8px 10px}
 .p-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .stats{display:flex;gap:8px;flex-wrap:wrap}
 .pill{white-space:nowrap;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 11px;font-size:.85rem;font-weight:600}
-.pill.ok{color:var(--ok)} .pill.bad{color:var(--bad)}
+.pill.ok{color:var(--ok)}
+.pill.pick{cursor:pointer;font:inherit;font-size:.85rem;font-weight:600;color:inherit}
+.pill.pick:hover{border-color:var(--accent)}
+.pill.pick.sel{background:var(--accent);border-color:var(--accent);color:var(--accent-text)} .pill.bad{color:var(--bad)}
 .stage{max-width:560px;margin:0 auto}
 .card-wrap{perspective:1400px}
 .card{position:relative;width:100%;height:320px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.3,1);cursor:pointer;animation:pop .28s ease}
@@ -1021,7 +1024,7 @@ function answer(ok) {
   if (isReview()) {
     if (ok) {
       const g = revProg(w.id); g[curDir] = true;
-      if (g.en && g.cz) { rev.done.add(w.id); toast(`✔ „${w.en}“ zopakováno – zůstává v Umím`); }
+      if (g.en && g.cz) rev.done.add(w.id);
       sess.ok++;
     } else {
       setStatus(w, "neumim"); delete rev.prog[w.id]; sess.bad++;
@@ -1067,19 +1070,16 @@ function renderPractice() {
   const cnt = (id, st) => S.words.filter(w => w.status === st && (id === "all" || w.areaId === id)).length;
   const a = S.settings.practiceArea, R = isReview(), set = R ? "umim" : "neumim";
   const left = R ? pool().length : 0;
-  let html = `<div class="tabs" style="margin-top:0">
-      <button class="tab ${R ? "" : "active"}" data-set="neumim">❌ Učit se (Neumím)</button>
-      <button class="tab ${R ? "active" : ""}" data-set="umim">✅ Opakovat (Umím)</button></div>
-    <div class="p-top">
+  let html = `<div class="p-top">
     <select class="inline" id="pArea">
       <option value="all">Všechny oblasti (${cnt("all", set)})</option>
       ${S.areas.map(x => `<option value="${x.id}" ${x.id === a ? "selected" : ""}>${esc(x.name)} (${cnt(x.id, set)})</option>`).join("")}
     </select>
-    <div class="stats grow">${R
-      ? `<span class="pill">Zbývá zopakovat: ${left}</span><span class="pill ok">Zopakováno: ${revRound().done.size}</span>`
-      : `<span class="pill">Neumím: ${cnt(a, "neumim")}</span><span class="pill">Umím: ${cnt(a, "umim")}</span>`}
+    <div class="stats grow">
+      <button class="pill pick ${R ? "" : "sel"}" data-set="neumim" title="Procvičovat slovíčka ze složky Neumím">Neumím: ${cnt(a, "neumim")}</button>
+      <button class="pill pick ${R ? "sel" : ""}" data-set="umim" title="Zopakovat slovíčka ze složky Umím">Umím: ${cnt(a, "umim")}</button>
       <span class="pill ok">✓ ${sess.ok}</span><span class="pill bad">✗ ${sess.bad}</span></div></div>
-    ${R ? `<p class="small muted" style="margin:-6px 0 14px">Opakování: stačí 1× správně v každém směru. Při ✗ se slovíčko vrátí do Neumím.</p>` : ""}`;
+    ${R ? `<p class="small muted" style="margin:-6px 0 14px">Opakuješ složku Umím – zbývá ${left}, zopakováno ${revRound().done.size}. Stačí 1× správně v každém směru, při ✗ se slovíčko vrátí do Neumím.</p>` : ""}`;
   if (!cur && R) {
     const total = cnt(a, "umim") + rev.done.size;
     html += `<div class="panel empty"><div class="big">${rev.done.size ? "🎉" : "📭"}</div>
